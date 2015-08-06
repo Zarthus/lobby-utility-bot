@@ -12,9 +12,9 @@ module VoiceBot
 
       def ctcp_version(m)
         if @bot.config.source_url
-          m.ctcp_reply "GameBot v#{VERSION} using Cinch v#{Cinch::VERSION} | #{@bot.config.source_url}"
+          m.ctcp_reply "VoiceBot v#{VERSION} using Cinch v#{Cinch::VERSION} | #{@bot.config.source_url}"
         else
-          m.ctcp_reply "GameBot v#{VERSION} using Cinch v#{Cinch::VERSION}"
+          m.ctcp_reply "VoiceBot v#{VERSION} using Cinch v#{Cinch::VERSION}"
         end
       end
 
