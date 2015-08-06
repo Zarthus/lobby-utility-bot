@@ -1,0 +1,33 @@
+irc:
+  server: "irc.example.org"
+  server_password:
+  port: 6697
+  ssl: true
+  ssl_verify: false
+  bind:
+  umodes:
+
+  realname: "Voice Bot"
+  username: "voicebot"
+  nick: "VoiceBot"
+
+  auth:
+    cert:
+      client_cert:
+
+    sasl:
+      account:
+      password:
+
+  channels:
+    - "#autovoice"
+
+plugin:
+  autovoice:
+    voice_timer_interval: 60
+    voice_minute_idle: 20
+    voice_queue_timer: 5
+
+logging: true
+prefix: "!"
+source_url: "https://github.com/zarthus/irc-voice-bot/"
