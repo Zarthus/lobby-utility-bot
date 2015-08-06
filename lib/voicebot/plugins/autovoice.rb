@@ -60,6 +60,7 @@ module VoiceBot
           elsif option == 'status'
             status = @autovoice[m.channel] ? 'enabled' : 'disabled'
             m.reply "Autovoice setting for #{m.channel}: #{status}."
+            m.reply "Global settings: Check every #{@bot.config.voice_timer} seconds for #{@bot.config.voice_idle} minutes of inactivity, processing the queue every #{@bot.config.queue_timer} seconds."
           elsif option == 'purge'
             affected = @autovoice[m.channel].count
             m.reply "Purging AutoVoice list. #{affected} users are affected."
