@@ -53,7 +53,6 @@ module VoiceBot
           c.queue_timer = config['plugin']['autovoice']['voice_queue_timer'] || 5
           c.name_away_regex = config['plugin']['autovoice']['name_away_regex']
 
-
           alt_storage = File.join(Dir.back(c.root, 2), 'storage')
           c.smart_away = config['plugin']['autovoice']['smart_away']
           c.storage = File.join(config['storage_path'] || alt_storage)

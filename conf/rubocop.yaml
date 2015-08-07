@@ -11,4 +11,4 @@ Style/CaseIndentation:
   IndentOneStep: true
 
 Metrics/ClassLength:
-  Max: 200
+  Max: 250
