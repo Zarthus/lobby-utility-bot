@@ -26,6 +26,8 @@ module VoiceBot
       listen_to :part, method: :on_part
       listen_to :voice, method: :on_voice
       listen_to :devoice, method: :on_devoice
+      listen_to :op, method: :on_op
+      listen_to :deop, method: :on_deop
       listen_to :nick, method: :on_user_state_change
       listen_to :away, method: :on_user_state_change
 
@@ -40,6 +42,10 @@ module VoiceBot
             info "Enabling autovoice for channel: #{c}"
             @autovoice[Channel(c.to_s)] = []
           end
+        end
+
+        @autovoice.each do |chan, _|
+          search_voices(chan)
         end
       end
 
@@ -168,6 +174,21 @@ module VoiceBot
         remove(user, m.channel) if find(user, m.channel)
       end
 
+      def on_op(m, user)
+        if user.nick == @bot.nick
+          search_voices(m.channel) if enabled?(m.channel)
+        end
+      end
+
+      def on_deop(m, user)
+        if user.nick == @bot.nick
+          if disabled?(m.channel) && @autovoice.key?(m.channel)
+            log "Clearing #{m.channel.name}'s voice list from our records due to de-op.'"
+            @autovoice[m.channel] = []
+          end
+        end
+      end
+
       def on_user_state_change(m)
         if @smart_away && (@away_regexp.match(m.user.nick) || m.user.away)
           @autovoice.each do |chan, _|
@@ -211,6 +232,17 @@ module VoiceBot
           if search
             @modequeue.append(channel, 'v', user, false)
             remove(user, channel) if remove
+          end
+        end
+      end
+
+      def search_voices(chan)
+        if enabled?(chan)
+          chan.users.each do |user, _data|
+            if chan.voiced?(user) && !find(user, chan)
+              log "Adding already voiced user #{user} to our records."
+              @autovoice[chan] << VoicedUser.new(user, chan, @idle)
+            end
           end
         end
       end
