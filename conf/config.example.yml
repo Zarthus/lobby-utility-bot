@@ -27,6 +27,8 @@ plugin:
     voice_timer_interval: 60
     voice_minute_idle: 20
     voice_queue_timer: 5
+    smart_away: true
+    name_away_regex: "/Away$|Sleep$/i"
 
 logging: true
 prefix: "!"

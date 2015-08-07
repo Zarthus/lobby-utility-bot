@@ -6,8 +6,12 @@ module VoiceBot
       @channel = channel
     end
 
-    def update_expiry(expiry)
+    def renew_expiry(expiry)
       @expiry.renew(expiry)
+    end
+
+    def reduce_expiry_to(expiry)
+      @expiry.reduce_to(expiry)
     end
 
     attr_reader :user

@@ -10,15 +10,24 @@ module VoiceBot
         @idle = @bot.config.voice_idle * 60
         @modequeue = ModeQueue.new
 
+        @away_regexp = Regexp.new(@bot.config.name_away_regex)
+        @smart_away = @bot.config.smart_away
+
+        @away_modifier = (@bot.config.voice_idle / 5).ceil * 60
+        @away_modifier = 180 if @away_modifier < 180
+
         Timer(@bot.config.voice_timer, method: :check_voices)
         Timer(@bot.config.queue_timer, method: :check_queue)
       end
 
       listen_to :message, method: :on_message
       listen_to :quit, method: :on_quit
+      listen_to :kick, method: :on_kick
       listen_to :part, method: :on_part
       listen_to :voice, method: :on_voice
       listen_to :devoice, method: :on_devoice
+      listen_to :nick, method: :on_user_state_change
+      listen_to :away, method: :on_user_state_change
 
       timer 10, method: :on_init, shots: 1
 
@@ -34,8 +43,8 @@ module VoiceBot
         end
       end
 
-      match Regexp.new('autovoice (on|off|status|purge|debug)$'), method: :cmd_toggle_autovoice
-      def cmd_toggle_autovoice(m, option)
+      match Regexp.new('autovoice (on|off|status|purge|debug)$'), method: :cmd_autovoice
+      def cmd_autovoice(m, option)
         if m.channel.opped?(m.user)
           if option == 'on'
             if enabled?(m.channel)
@@ -51,7 +60,7 @@ module VoiceBot
 
             @autovoice[m.channel].each do |vusers|
               vusers.each do |vuser|
-                queue_devoice(m.channel, vuser)
+                queue_devoice(m.channel, vuser, false)
               end
             end
 
@@ -60,7 +69,21 @@ module VoiceBot
           elsif option == 'status'
             status = @autovoice[m.channel] ? 'enabled' : 'disabled'
             m.reply "Autovoice setting for #{m.channel}: #{status}."
-            m.reply "Global settings: Check every #{@bot.config.voice_timer} seconds for #{@bot.config.voice_idle} minutes of inactivity, processing the queue every #{@bot.config.queue_timer} seconds."
+
+            gset = "Global settings: Check every #{bot.config.voice_timer} seconds for #{bot.config.voice_idle} minutes of inactivity, "
+            gset += "Processing the queue every #{@bot.config.queue_timer} seconds. "
+            gset += 'SmartAway is disabled.' unless @smart_away
+
+            regexp_str = "or upon matching the '#{@bot.config.name_away_regex}' regex, " if @away_regexp
+
+            gset += "On /away, #{regexp_str}" if @smart_away
+            gset += "the users timer gets reduced to #{@away_modifier} seconds." if @smart_away
+
+            if gset.length > 400
+              gset = 'Global settings: ' + Gist.gist(gset)['html_url']
+            end
+
+            m.reply(gset)
           elsif option == 'purge'
             affected = @autovoice[m.channel].count
             m.reply "Purging AutoVoice list. #{affected} users are affected."
@@ -73,10 +96,11 @@ module VoiceBot
 
             @autovoice[m.channel] = []
           elsif option == 'debug' # TODO: && is not administrator
-            debug @autovoice.to_s
+            dump = PP.pp(@autovoice, '')
+            debug dump
 
             begin
-              gist_url = Gist.gist(@autovoice[m.channel].to_s)['html_url']
+              gist_url = Gist.gist(dump)['html_url']
               m.user.notice "Debug info: #{gist_url}"
             rescue StandardError => e
               m.reply "An error occurred while gisting contents. #{e}"
@@ -99,13 +123,13 @@ module VoiceBot
           vusers_copy.each do |vuser|
             if vuser.expired?
               queue_devoice(channel, vuser.user)
-              av_delete << {channel: channel, user: vuser.user}
+              av_delete << { channel: channel, user: vuser.user }
             end
           end
         end
 
         av_delete.each do |hash|
-          puts "Deleting #{hash.to_s}"
+          debug "Deleting #{hash}"
           @autovoice[hash[:channel]].delete(hash[:user])
         end
       end
@@ -123,11 +147,15 @@ module VoiceBot
       end
 
       def on_quit(m)
-        remove(m.user) if enabled?(m.channel)
+        remove(m.user)
+      end
+
+      def on_kick(m, user)
+        remove(user, m.channel) if find(user, m.channel)
       end
 
       def on_part(m)
-        remove(m.user, m.channel) if enabled?(m.channel)
+        remove(m.user, m.channel) if find(m.user, m.channel)
       end
 
       def on_voice(m, user)
@@ -140,12 +168,23 @@ module VoiceBot
         remove(user, m.channel) if find(user, m.channel)
       end
 
+      def on_user_state_change(m)
+        if @smart_away && (@away_regexp.match(m.user.nick) || m.user.away)
+          @autovoice.each do |chan, _|
+            next unless enabled?(chan)
+
+            found = find(m.user, chan)
+            found.reduce_expiry_to(@away_modifier) if found
+          end
+        end
+      end
+
       def autovoice(m)
         if m.channel.voiced?(m.user)
           search = find(m.user, m.channel)
 
           if search
-            search.update_expiry(@idle)
+            search.renew_expiry(@idle)
           else
             # The user is voiced, but not in our records.  Possibly a recovery from a crash or reboot. Or voiced by another op.
             log "User #{m.user.nick} seems to already be voiced, adding to records."
@@ -165,13 +204,13 @@ module VoiceBot
         end
       end
 
-      def queue_devoice(channel, user)
+      def queue_devoice(channel, user, remove = true)
         if voiced?(user, channel, false)
           search = find(user, channel)
 
           if search
             @modequeue.append(channel, 'v', user, false)
-            remove(user, channel)
+            remove(user, channel) if remove
           end
         end
       end
@@ -188,14 +227,14 @@ module VoiceBot
       end
 
       def remove(user, channel = nil)
-        av_copy = @autovoice
+        av_copy = @autovoice.clone
 
         @autovoice.each do |chan, vusers|
           if channel && channel == chan || !channel
             vusers.each do |vuser|
               if vuser.user == user
                 debug "delete: found user #{vuser.user.nick} @ #{vuser.inspect}"
-                av_copy[channel].delete(vuser)
+                av_copy[chan].delete(vuser)
               end
             end
           end

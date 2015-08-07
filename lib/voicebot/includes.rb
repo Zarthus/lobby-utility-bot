@@ -1,6 +1,7 @@
 require 'cinch'
 require 'yaml'
 require 'gist'
+require 'pp'
 
 require 'voicebot/helpers/dir'
 require 'voicebot/helpers/voiced_user'
