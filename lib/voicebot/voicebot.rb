@@ -5,8 +5,10 @@ module VoiceBot
     def initialize
       @bot = Configuration.parse
 
-      logfile = storage(File.join('logs', 'irc.log'))
-      @bot.loggers << Cinch::Logger::FormattedLogger.new(File.open(logfile, 'w+'))
+      if @bot.config.logging
+        logfile = storage(File.join('logs', 'irc.log'))
+        @bot.loggers << Cinch::Logger::FormattedLogger.new(File.open(logfile, 'w+'))
+      end
     end
 
     def start
