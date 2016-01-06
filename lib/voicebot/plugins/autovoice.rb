@@ -49,7 +49,7 @@ module VoiceBot
         end
       end
 
-      match Regexp.new('autovoice (on|off|status|purge|debug)$'), method: :cmd_autovoice
+      match Regexp.new('autovoice (on|off|status|purge|reset|debug)$'), method: :cmd_autovoice
       def cmd_autovoice(m, option)
         if m.channel.opped?(m.user)
           if option == 'on'
@@ -101,6 +101,13 @@ module VoiceBot
             end
 
             @autovoice[m.channel] = []
+          elsif option == 'reset'
+            # Send a debug print to the user.
+            cmd_autovoice(m, 'debug')
+
+            # Purges the list and see whom is voiced.
+            @autovoice[m.channel] = []
+            search_voices(m.channel)
           elsif option == 'debug' # TODO: && is not administrator
             dump = PP.pp(@autovoice, '')
             debug dump
@@ -219,9 +226,7 @@ module VoiceBot
 
       def queue_voice(channel, user)
         unless voiced?(user, channel, false)
-          search = find(user, channel)
-
-          @modequeue.append(channel, 'v', user, true) unless search
+          @modequeue.append(channel, 'v', user, true) unless @modequeue.find_param(user)
         end
       end
 

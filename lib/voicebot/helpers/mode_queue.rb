@@ -16,6 +16,14 @@ module VoiceBot
       @queue.count
     end
 
+    def find_param(param)
+      @queue.each do |h|
+        return true if param == h[:parameter]
+      end
+
+      false
+    end
+
     def empty
       @queue = []
     end
