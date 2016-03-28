@@ -44,7 +44,7 @@ module VoiceBot
           c.channels = config['irc']['channels']
 
           c.plugins.prefix = /^#{Regexp.escape(config['prefix'])}/
-          c.plugins.plugins = [Plugin::AutoVoice, Plugin::CoreCTCP]
+          c.plugins.plugins = [Plugin::AutoVoice, Plugin::CoreCTCP, Plugin::Quotes]
 
           c.source_url = config['source_url'] if config['source_url']
 
@@ -56,6 +56,7 @@ module VoiceBot
           alt_storage = File.join(Dir.back(c.root, 2), 'storage')
           c.smart_away = config['plugin']['autovoice']['smart_away']
           c.storage = File.join(config['storage_path'] || alt_storage)
+          c.plugins.options[Plugin::Quotes] = { quotes_file: File.join(__dir__, '/../../conf/quotes.yml') }
         end
       end
     end

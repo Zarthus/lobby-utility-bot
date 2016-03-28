@@ -13,3 +13,4 @@ require 'voicebot/configuration'
 
 require 'voicebot/plugins/autovoice'
 require 'voicebot/plugins/ctcp'
+require 'voicebot/plugins/quotes'

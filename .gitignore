@@ -35,6 +35,7 @@ build/
 .rvmrc
 
 ## Project files
+conf/quotes.yml
 
 # Intelij
 .idea
