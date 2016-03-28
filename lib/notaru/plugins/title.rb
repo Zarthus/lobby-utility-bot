@@ -21,6 +21,10 @@ module Notaru
 
       match Regexp.new('t(?:itle)? ([^ ]+)$'), method: :cmd_title
       def cmd_title(m, url)
+        unless url.start_with?('http')
+          url = "http://#{url}"
+        end
+
         uri = Addressable::URI.parse(url).normalize
         title = find_title(uri)
 
