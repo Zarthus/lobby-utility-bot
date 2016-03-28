@@ -1,4 +1,4 @@
-module VoiceBot
+module Notaru
   class VoiceExpiry
     # A margin to make devoicing feel smoother
     # Users who talk at the same time might not get devoiced at the same time due to a second offset.

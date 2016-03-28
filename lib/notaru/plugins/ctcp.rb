@@ -1,6 +1,6 @@
 require 'time'
 
-module VoiceBot
+module Notaru
   module Plugin
     class CoreCTCP
       include Cinch::Plugin
@@ -12,9 +12,9 @@ module VoiceBot
 
       def ctcp_version(m)
         if @bot.config.source_url
-          m.ctcp_reply "VoiceBot v#{VERSION} using Cinch v#{Cinch::VERSION} | #{@bot.config.source_url}"
+          m.ctcp_reply "Notaru v#{VERSION} using Cinch v#{Cinch::VERSION} | #{@bot.config.source_url}"
         else
-          m.ctcp_reply "VoiceBot v#{VERSION} using Cinch v#{Cinch::VERSION}"
+          m.ctcp_reply "Notaru v#{VERSION} using Cinch v#{Cinch::VERSION}"
         end
       end
 

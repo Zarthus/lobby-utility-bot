@@ -1,6 +1,6 @@
 require 'thread_safe'
 
-module VoiceBot
+module Notaru
   module Plugin
     class AutoVoice
       include Cinch::Plugin

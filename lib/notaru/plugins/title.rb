@@ -2,7 +2,7 @@ require 'net/https'
 require 'addressable/uri'
 require 'nokogiri'
 
-module VoiceBot
+module Notaru
   module Plugin
     class Title
       include Cinch::Plugin

@@ -1,4 +1,4 @@
-module VoiceBot
+module Notaru
   class Configuration
     def self.parse
       Cinch::Bot.new do
@@ -26,10 +26,10 @@ module VoiceBot
           elsif config['irc']['nicks']
             c.nicks = config['irc']['nicks']
           else
-            c.nick = 'VoiceBot'
+            c.nick = 'Notaru'
           end
 
-          c.user = config['irc']['username'] || 'voicebot'
+          c.user = config['irc']['username'] || 'notaru'
           c.realname = config['irc']['realname'] || config['source_url'] || c.user
 
           c.local_host = config['irc']['bind'] if config['irc']['bind']

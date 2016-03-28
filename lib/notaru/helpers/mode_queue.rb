@@ -1,4 +1,4 @@
-module VoiceBot
+module Notaru
   class ModeQueue
     def initialize
       @queue = []

@@ -1,7 +1,7 @@
-require 'voicebot/includes'
+require 'notaru/includes'
 
-module VoiceBot
-  class VoiceBot
+module Notaru
+  class Notaru
     def initialize
       @bot = Configuration.parse
 

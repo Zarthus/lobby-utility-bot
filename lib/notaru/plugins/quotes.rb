@@ -1,7 +1,7 @@
 require 'cinch'
 require 'yaml'
 
-module VoiceBot
+module Notaru
   module Plugin
     class Quotes
       include Cinch::Plugin
@@ -46,10 +46,10 @@ module VoiceBot
           quote = quotes.find{|q| q["id"] == search.to_i }
           if quote.nil?
             m.reply "#{m.user.nick}: No quotes found."
-          else 
+          else
             m.reply "#{m.user.nick}: ##{quote["id"]} - #{quote["quote"]}"
           end
-        else 
+        else
           quotes.keep_if{ |q| q["quote"].downcase.include?(search.downcase) }
           if quotes.empty?
             m.reply "#{m.user.nick}: No quotes found."
@@ -64,7 +64,7 @@ module VoiceBot
       #--------------------------------------------------------------------------------
       # Protected
       #--------------------------------------------------------------------------------
-      
+
       protected
 
       def get_quotes

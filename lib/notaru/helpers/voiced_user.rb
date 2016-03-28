@@ -1,4 +1,4 @@
-module VoiceBot
+module Notaru
   class VoicedUser
     def initialize(user, channel, expiry)
       @expiry = VoiceExpiry.new(expiry)

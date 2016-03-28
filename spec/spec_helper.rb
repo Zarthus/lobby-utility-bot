@@ -1,1 +1,1 @@
-require 'voicebot/voicebot'
+require 'notaru/notaru'
