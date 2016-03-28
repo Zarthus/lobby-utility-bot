@@ -1,7 +1,10 @@
-IRC Voice Bot
-=============
+\#Lobby IRC utility bot
+======================
 
-A bot that voices active users in a channel, and devoices them after a certain period of time.
+This is the #lobby IRC utility bot on EsperNet.
+
+A bot that voices active users in a channel, and devoices them after a certain period of time. As
+well as other changes that were derived from the original concept as time went on.
 
 ## Installation
 
@@ -11,3 +14,7 @@ A bot that voices active users in a channel, and devoices them after a certain p
 * Copy `conf/quotes.yml.example` to `conf/quotes.yml`
 * Run `bundle install`
 * Start the bot using `ruby bot.rb`
+
+## Source
+
+The Lobby IRC utility bot was originally part of [this repository](https://github.com/Zarthus/irc-voice-bot)
