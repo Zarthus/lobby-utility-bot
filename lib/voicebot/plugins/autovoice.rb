@@ -1,3 +1,5 @@
+require 'thread_safe'
+
 module VoiceBot
   module Plugin
     class AutoVoice
@@ -6,7 +8,7 @@ module VoiceBot
       def initialize(*args)
         super
 
-        @autovoice = {}
+        @autovoice = ::ThreadSafe::Hash.new
         @idle = @bot.config.voice_idle * 60
         @modequeue = ModeQueue.new
 
