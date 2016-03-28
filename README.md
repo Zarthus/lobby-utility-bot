@@ -13,7 +13,7 @@ well as other changes that were derived from the original concept as time went o
 * Edit `conf/config.yml` to your desires.
 * Copy `conf/quotes.yml.example` to `conf/quotes.yml`
 * Run `bundle install`
-* Start the bot using `ruby bot.rb`
+* Start the bot using `bundle exec ruby bot.rb`
 
 ## Source
 

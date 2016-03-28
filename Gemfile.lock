@@ -24,6 +24,8 @@ GEM
     mime-types (2.99.1)
     mini_portile2 (2.0.0)
     netrc (0.11.0)
+    nokogiri (1.6.7.2)
+      mini_portile2 (~> 2.0.0.rc2)
     nokogiri (1.6.7.2-x64-mingw32)
       mini_portile2 (~> 2.0.0.rc2)
     parser (2.3.0.7)
@@ -31,6 +33,10 @@ GEM
     powerpack (0.1.1)
     rainbow (2.1.0)
     rake (11.1.2)
+    rest-client (1.8.0)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
     rest-client (1.8.0-x64-mingw32)
       ffi (~> 1.9)
       http-cookie (>= 1.0.2, < 2.0)
@@ -59,10 +65,12 @@ GEM
     thread_safe (0.3.5)
     unf (0.1.4)
       unf_ext
+    unf_ext (0.0.7.2)
     unf_ext (0.0.7.2-x64-mingw32)
     unicode-display_width (1.0.2)
 
 PLATFORMS
+  ruby
   x64-mingw32
 
 DEPENDENCIES
