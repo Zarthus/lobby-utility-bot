@@ -44,7 +44,7 @@ module VoiceBot
           c.channels = config['irc']['channels']
 
           c.plugins.prefix = /^#{Regexp.escape(config['prefix'])}/
-          c.plugins.plugins = [Plugin::AutoVoice, Plugin::CoreCTCP, Plugin::Quotes]
+          c.plugins.plugins = [Plugin::AutoVoice, Plugin::CoreCTCP, Plugin::Quotes, Plugin::Title]
 
           c.source_url = config['source_url'] if config['source_url']
 
