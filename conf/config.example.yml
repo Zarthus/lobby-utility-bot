@@ -7,9 +7,9 @@ irc:
   bind:
   umodes:
 
-  realname: "Voice Bot"
-  username: "voicebot"
-  nick: "VoiceBot"
+  realname: "Lobby Bot"
+  username: "lobby"
+  nick: "lobbybot"
 
   auth:
     cert:
@@ -20,7 +20,7 @@ irc:
       password:
 
   channels:
-    - "#autovoice"
+    - "#notlobby"
 
 plugin:
   autovoice:
