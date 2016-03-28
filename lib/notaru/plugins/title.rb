@@ -1,6 +1,6 @@
-require 'net/https'
 require 'addressable/uri'
 require 'nokogiri'
+require 'unirest'
 
 module Notaru
   module Plugin
@@ -15,24 +15,29 @@ module Notaru
         # Do not send any message if title could not be retrieved.
         @silent_on_failure = false
 
+        Unirest.user_agent("NotaruIRCBot/#{VERSION}")
         super
       end
 
       match Regexp.new('t(?:itle)? ([^ ]+)$'), method: :cmd_title
       def cmd_title(m, url)
-        uri = Addressable::URI.parse(url)
+        uri = Addressable::URI.parse(url).normalize
         title = find_title(uri)
 
-        if title
-          m.channel.msg(@format % {
+        if title && !title.empty?
+          m.channel.send(@format % {
               title: title,
               url: url,
               host: uri.host,
               nick: m.user.nick
           })
+        elsif title && title.empty?
+          unless @silent_on_failure
+            m.user.notice("Could not retrieve a valid title from #{uri.host}")
+          end
         else
           unless @silent_on_failure
-            m.reply('Sorry, I was unable to retrieve the title.')
+            m.user.notice('Sorry, I was unable to retrieve the title.')
           end
         end
       end
@@ -41,19 +46,18 @@ module Notaru
       # @return [String, false]
       def find_title(uri)
         if !uri || !valid_url?(uri) || ignored?(uri)
+          debug("Won't fetch HTML for #{uri.inspect}, uri is falsy, invalid, or ignored.")
           return false
         end
 
-        request = Net::HTTP.get(uri.host, uri.path, uri.port)
+        html = fetch_html(uri)
 
-        begin
-          request.value
-        rescue
-          info("HTTP Request for #{uri.host} failed.")
+        if !html || html.empty?
+          debug("Unable to fetch HTML for #{uri.host} (HTML: #{html.inspect})")
           return false
         end
 
-        Nokogiri::HTML(request.body).css('title').text
+        Nokogiri::HTML(html).css('title').text
       end
 
       # @param url [Addressable::URI]
@@ -72,6 +76,16 @@ module Notaru
       # @return [Boolean]
       def valid_url?(url)
         url.scheme =~ /https?/
+      end
+
+      # @param [Addressable::URI, String] uri
+      # @return [String, false]
+      def fetch_html(uri)
+        response = Unirest.get(uri.to_s)
+
+        return false if response.code != 200
+
+        response.body
       end
     end
   end

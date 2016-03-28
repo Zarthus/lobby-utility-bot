@@ -1,12 +1,29 @@
+GIT
+  remote: https://github.com/Mashape/unirest-ruby.git
+  revision: 2b727753579d47b454fcdba7576b153960737a5e
+  specs:
+    unirest (1.1.2)
+      addressable (~> 2.3.5)
+      json (~> 1.8.1)
+      rest-client (~> 1.8.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.4.0)
+    addressable (2.3.8)
     ast (2.2.0)
     cinch (2.3.1)
     diff-lcs (1.2.5)
+    domain_name (0.5.20160310)
+      unf (>= 0.0.5, < 1.0.0)
+    ffi (1.9.10-x64-mingw32)
     gist (4.5.0)
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
+    json (1.8.3)
+    mime-types (2.99.1)
     mini_portile2 (2.0.0)
+    netrc (0.11.0)
     nokogiri (1.6.7.2-x64-mingw32)
       mini_portile2 (~> 2.0.0.rc2)
     parser (2.3.0.7)
@@ -14,6 +31,11 @@ GEM
     powerpack (0.1.1)
     rainbow (2.1.0)
     rake (11.1.2)
+    rest-client (1.8.0-x64-mingw32)
+      ffi (~> 1.9)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
     rspec (3.4.0)
       rspec-core (~> 3.4.0)
       rspec-expectations (~> 3.4.0)
@@ -35,6 +57,9 @@ GEM
       unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-progressbar (1.7.5)
     thread_safe (0.3.5)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.2-x64-mingw32)
     unicode-display_width (1.0.2)
 
 PLATFORMS
@@ -49,6 +74,7 @@ DEPENDENCIES
   rspec
   rubocop
   thread_safe
+  unirest!
 
 BUNDLED WITH
    1.11.2
