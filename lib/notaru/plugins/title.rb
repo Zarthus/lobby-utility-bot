@@ -9,7 +9,7 @@ module Notaru
 
       def initialize(*args)
         # Supported keys: title, url, host, nick
-        @format = 'Title: \'%{title}\' at %{host} (%{nick})'
+        @format = 'Title: \'%{title}\' at %{host}'
         # List of Regexes
         @ignore = []
         # Do not send any message if title could not be retrieved.
@@ -25,7 +25,7 @@ module Notaru
         title = find_title(uri)
 
         if title && !title.empty?
-          m.channel.send(@format % {
+          m.reply(@format % {
               title: title,
               url: url,
               host: uri.host,
