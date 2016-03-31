@@ -44,13 +44,19 @@ module Notaru
           c.channels = config['irc']['channels']
 
           c.plugins.prefix = /^#{Regexp.escape(config['prefix'])}/
-          c.plugins.plugins = [Plugin::AutoVoice, Plugin::CoreCTCP, Plugin::Quotes, Plugin::Title]
+          c.plugins.plugins = [Plugin::AuthCheck, Plugin::AutoVoice, Plugin::CoreCTCP, Plugin::Quotes, Plugin::Title]
 
           c.source_url = config['source_url'] if config['source_url']
 
           c.title_format = config['plugin']['title']['format'] || 'Title: \'%{title}\' at %{host}'
           c.title_ignore = config['plugin']['title']['ignore'] || []
           c.title_silent_on_fail = config['plugin']['title']['silent_on_failure']
+
+          c.authcheck_channels = config['plugin']['authcheck']['channels'] || []
+          c.authcheck_masks = config['plugin']['authcheck']['masks'] || []
+          c.authcheck_kick_first = config['plugin']['authcheck']['kick_first'].nil? ? true : config['plugin']['authcheck']['kick_first']
+          c.authcheck_timeout = config['plugin']['authcheck']['timeout'] || 180
+          c.authcheck_reason_format = config['plugin']['authcheck']['reason_format'] || 'You need to be authenticated with NickServ to join %{channel}, see \'/msg NickServ HELP REGISTER\' for more information.'
 
           c.voice_timer = config['plugin']['autovoice']['voice_timer_interval'] || 60
           c.voice_idle = config['plugin']['autovoice']['voice_minute_idle'] || 60

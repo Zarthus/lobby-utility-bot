@@ -34,6 +34,15 @@ plugin:
     ignore:
       - 'google.com'
     silent_on_failure: false
+  authcheck:
+    channels:
+      - "#notlobby"
+    masks:
+      - "*!webchat@*"
+      - "*!Mibbit@*"
+    kick_first: true
+    timeout: 180
+    reason_format: "You need to be authenticated with NickServ to join %{channel}, see '/msg NickServ HELP REGISTER' for more information."
 
 logging: true
 prefix: "!"

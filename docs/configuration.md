@@ -28,6 +28,12 @@ plugin.title.format: String, dynamic content is wrapped in %{}, supported values
 plugin.title.ignore: Array, list of domains to ignore
 plugin.title.silent_on_failure: Boolean, true if you want the bot to not notice the user on failure
 
+plugin.authcheck.channels: Array, List of channels to run this plugin in
+plugin.authcheck.masks: Array, List of masks to ban if they are not authorized to nickserv.
+plugin.authcheck.kick_first: Boolean, first give the user a kick.
+plugin.authcheck.timeout: Integer, seconds to ban
+plugin.authcheck.reason_format: String, dynamic content is wrapped in %{}, supported values: nick, channel, user, host
+
 logging: Boolean, log to file or not?
 prefix: String char, what is the prefix to our commands?
 source_url: Optional String, if the project is open source, you can put an URL to its location here.

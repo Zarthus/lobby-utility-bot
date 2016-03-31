@@ -11,6 +11,7 @@ require 'notaru/helpers/mode_queue'
 require 'notaru/version'
 require 'notaru/configuration'
 
+require 'notaru/plugins/authcheck'
 require 'notaru/plugins/autovoice'
 require 'notaru/plugins/ctcp'
 require 'notaru/plugins/quotes'
