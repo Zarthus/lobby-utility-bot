@@ -56,7 +56,9 @@ module Notaru
           c.authcheck_masks = config['plugin']['authcheck']['masks'] || []
           c.authcheck_kick_first = config['plugin']['authcheck']['kick_first'].nil? ? true : config['plugin']['authcheck']['kick_first']
           c.authcheck_timeout = config['plugin']['authcheck']['timeout'] || 180
-          c.authcheck_reason_format = config['plugin']['authcheck']['reason_format'] || 'You need to be authenticated with NickServ to join %{channel}, see \'/msg NickServ HELP REGISTER\' for more information.'
+          c.authcheck_reason_format = (config['plugin']['authcheck']['reason_format'] || 'You need to be ' \
+              'authenticated with NickServ to join %{channel}, ' \
+              'see \'/msg NickServ HELP REGISTER\' for more information.')
 
           c.voice_timer = config['plugin']['autovoice']['voice_timer_interval'] || 60
           c.voice_idle = config['plugin']['autovoice']['voice_minute_idle'] || 60

@@ -51,7 +51,7 @@ module Notaru
             m.reply("The mask '#{option}' has been exempted. This is a temporary action.")
           rescue NoMethodError => e
             m.reply('The mask could not be exempted (did you enter a valid hostmask?)')
-            info("Failed to exempt mask (may not be an error): #{e.to_s}")
+            info("Failed to exempt mask (may not be an error): #{e}")
           end
         elsif command == 'info'
           exmpt = @exempt.join(', ')
@@ -100,16 +100,14 @@ module Notaru
       def timeout_user(m)
         mask = m.user.mask('*!%u@%h')
         reason = @reason % {
-            nick: m.user.nick,
-            user: m.user.user,
-            host: m.user.host,
-            channel: m.channel.name
+          nick: m.user.nick,
+          user: m.user.user,
+          host: m.user.host,
+          channel: m.channel.name
         }
 
         if @kick_first && !@kicked.include?(mask)
-          if @kicked.count > 10
-            @kicked = []
-          end
+          @kicked = [] if @kicked.count > 10
 
           @kicked << mask
           m.channel.kick(m.user, reason)
@@ -119,7 +117,7 @@ module Notaru
         m.channel.ban(mask)
         m.channel.kick(m.user, reason)
         m.user.msg(
-          "You have been banned from #{m.channel.name} for #{timeout_to_s} because you need to be " +
+          "You have been banned from #{m.channel.name} for #{timeout_to_s} because you need to be " \
           'logged in to enter this channel. Please authenticate before rejoining.'
         )
 
@@ -132,9 +130,7 @@ module Notaru
       def timeout_to_s
         minutes = @timeout / 60
 
-        if minutes > 1
-          return "#{minutes} minutes"
-        end
+        return "#{minutes} minutes" if minutes > 1
 
         "#{@timeout} seconds"
       end

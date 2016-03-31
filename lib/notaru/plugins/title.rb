@@ -22,19 +22,17 @@ module Notaru
 
       match Regexp.new('t(?:itle)? ([^ ]+)$'), method: :cmd_title
       def cmd_title(m, url)
-        unless url.start_with?('http')
-          url = "http://#{url}"
-        end
+        url = "http://#{url}" unless url.start_with?('http')
 
         uri = Addressable::URI.parse(url).normalize
         title = find_title(uri)
 
         if title && !title.empty?
           m.reply(@format % {
-              title: title,
-              url: url,
-              host: uri.host,
-              nick: m.user.nick
+            title: title,
+            url: url,
+            host: uri.host,
+            nick: m.user.nick
           })
         elsif title && title.empty?
           unless @silent_on_failure
@@ -69,9 +67,7 @@ module Notaru
       # @return [Boolean]
       def ignored?(url)
         @ignore.each do |regex|
-          if url.host =~ regex
-            return true
-          end
+          return true if url.host =~ regex
         end
 
         false
