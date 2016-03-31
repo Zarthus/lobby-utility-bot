@@ -48,6 +48,10 @@ module Notaru
 
           c.source_url = config['source_url'] if config['source_url']
 
+          c.title_format = config['plugin']['title']['format'] || 'Title: \'%{title}\' at %{host}'
+          c.title_ignore = config['plugin']['title']['ignore'] || []
+          c.title_silent_on_fail = config['plugin']['title']['silent_on_failure']
+
           c.voice_timer = config['plugin']['autovoice']['voice_timer_interval'] || 60
           c.voice_idle = config['plugin']['autovoice']['voice_minute_idle'] || 60
           c.queue_timer = config['plugin']['autovoice']['voice_queue_timer'] || 5

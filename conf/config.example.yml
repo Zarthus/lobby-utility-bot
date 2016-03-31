@@ -29,6 +29,11 @@ plugin:
     voice_queue_timer: 5
     smart_away: true
     name_away_regex: "/Away$|Sleep$/i"
+  title:
+    format: "Title: '%{title}' at %{host}"
+    ignore:
+      - 'google.com'
+    silent_on_failure: false
 
 logging: true
 prefix: "!"

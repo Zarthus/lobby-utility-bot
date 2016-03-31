@@ -24,6 +24,10 @@ plugin.autovoice.voice_queue_timer: Integer, how often, in seconds, do we clear 
 plugin.autovoice.smart_away: Boolean, do we reduce the timer when an user goes /away or matches name_away_regex?
 plugin.autovoice.name_away_regex: Boolean false or String Regular Expression, matches nicks that are detected as 'away'
 
+plugin.title.format: String, dynamic content is wrapped in %{}, supported values: title, url, host, nick
+plugin.title.ignore: Array, list of domains to ignore
+plugin.title.silent_on_failure: Boolean, true if you want the bot to not notice the user on failure
+
 logging: Boolean, log to file or not?
 prefix: String char, what is the prefix to our commands?
 source_url: Optional String, if the project is open source, you can put an URL to its location here.
