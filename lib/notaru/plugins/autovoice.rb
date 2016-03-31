@@ -165,8 +165,8 @@ module Notaru
         remove(m.user)
       end
 
-      def on_kick(m, user)
-        remove(user, m.channel) if find(user, m.channel)
+      def on_kick(m)
+        remove(m.user, m.channel) if find(m.user, m.channel)
       end
 
       def on_part(m)
