@@ -26,12 +26,12 @@ module Notaru
       def on_join(m)
         return unless @channels.include?(m.channel.name)
         return unless m.channel.opped?(@bot)
+        return unless matches?(m.user.mask)
 
         m.user.refresh
 
         return unless m.user.authname.nil?
-        return unless matches?(m.user.mask)
-
+        
         timeout_user(m)
       end
 
