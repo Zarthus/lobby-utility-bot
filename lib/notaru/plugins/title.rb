@@ -13,7 +13,11 @@ module Notaru
         # Supported keys: title, url, host, nick
         @format = @bot.config.title_format
         # List of Regexes
-        @ignore = @bot.config.title_ignore
+        @ignore = []
+        @bot.config.title_ignore.each do |regex|
+            @ignore << Regexp.new(regex)
+        end
+
         # Do not send any message if title could not be retrieved.
         @silent_on_failure = @bot.config.title_silent_on_fail
 

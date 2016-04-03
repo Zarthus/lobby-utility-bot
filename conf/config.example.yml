@@ -32,7 +32,7 @@ plugin:
   title:
     format: "Title: '%{title}' at %{host}"
     ignore:
-      - 'google.com'
+      - '/google\.com/'
     silent_on_failure: false
   authcheck:
     channels:
