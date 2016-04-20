@@ -211,19 +211,23 @@ module Notaru
       end
 
       def autovoice(m)
-        if m.channel.voiced?(m.user)
+        synchronize(:autovoice_sync) do
           search = find(m.user, m.channel)
 
-          if search
-            search.renew_expiry(@idle)
+          if m.channel.voiced?(m.user)
+            if search
+              search.renew_expiry(@idle)
+            else
+              # The user is voiced, but not in our records.  Possibly a recovery from a crash or reboot. Or voiced by another op.
+              log "User #{m.user.nick} seems to already be voiced, adding to records."
+              @autovoice[m.channel] << VoicedUser.new(m.user, m.channel, @idle)
+            end
           else
-            # The user is voiced, but not in our records.  Possibly a recovery from a crash or reboot. Or voiced by another op.
-            log "User #{m.user.nick} seems to already be voiced, adding to records."
-            @autovoice[m.channel] << VoicedUser.new(m.user, m.channel, @idle)
+            unless search
+              queue_voice(m.channel, m.user)
+              @autovoice[m.channel] << VoicedUser.new(m.user, m.channel, @idle)
+            end
           end
-        else
-          queue_voice(m.channel, m.user)
-          @autovoice[m.channel] << VoicedUser.new(m.user, m.channel, @idle)
         end
       end
 
