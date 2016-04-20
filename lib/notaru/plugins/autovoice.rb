@@ -82,6 +82,7 @@ module Notaru
             gset += "Processing the queue every #{@bot.config.queue_timer} seconds. "
             gset += 'SmartAway is disabled.' unless @smart_away
 
+            regexp_str = ''
             regexp_str = "or upon matching the '#{@bot.config.name_away_regex}' regex, " if @away_regexp
 
             gset += "On /away, #{regexp_str}" if @smart_away
