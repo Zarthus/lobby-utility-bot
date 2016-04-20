@@ -15,7 +15,7 @@ module Notaru
         # List of Regexes
         @ignore = []
         @bot.config.title_ignore.each do |regex|
-            @ignore << Regexp.new(regex)
+          @ignore << Regexp.new(regex)
         end
 
         # Do not send any message if title could not be retrieved.

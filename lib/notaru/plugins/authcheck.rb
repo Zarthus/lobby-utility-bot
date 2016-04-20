@@ -31,7 +31,7 @@ module Notaru
         m.user.refresh
 
         return unless m.user.authname.nil?
-        
+
         timeout_user(m)
       end
 
