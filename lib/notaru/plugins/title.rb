@@ -24,7 +24,7 @@ module Notaru
         # The prefix char (without ^)
         @prefix_override = '\\b' + (@bot.config.prefix_char.nil? ? '!' : @bot.config.prefix_char)
         self.class.match(
-            Regexp.new('t(?:itle)? ([^ ]+)'), { method: :cmd_title, prefix: Regexp.new(@prefix_override) }
+          Regexp.new('t(?:itle)? ([^ ]+)'), method: :cmd_title, prefix: Regexp.new(@prefix_override)
         )
 
         Unirest.user_agent("NotaruIRCBot/#{VERSION}")

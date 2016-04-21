@@ -46,13 +46,13 @@ module Notaru
           c.prefix_char = Regexp.escape(config['prefix'])
           c.plugins.prefix = /^#{c.prefix_char}/
           c.plugins.plugins = [
-              Plugin::AuthCheck,
-              Plugin::AutoVoice,
-              Plugin::CoreCTCP,
-              Plugin::Quotes,
-              Plugin::SecretAdmin,
-              Plugin::Title,
-              Plugin::UnbanDate
+            Plugin::AuthCheck,
+            Plugin::AutoVoice,
+            Plugin::CoreCTCP,
+            Plugin::Quotes,
+            Plugin::SecretAdmin,
+            Plugin::Title,
+            Plugin::UnbanDate
           ]
 
           c.source_url = config['source_url'] if config['source_url']

@@ -14,15 +14,15 @@ module Notaru
         prefix = @bot.config.plugins.prefix
         # Due to priority, avoid conflicts - longer strings should come first.
         @match_regexp = Regexp.new(
-            "#{prefix}(kick|kickban|ban|unban|quiet|unquiet|kb|ub|uq|k|q|b)(?: ([^ ]+))?(?: (.*))?"
+          "#{prefix}(kick|kickban|ban|unban|quiet|unquiet|kb|ub|uq|k|q|b)(?: ([^ ]+))?(?: (.*))?"
         )
         @match_map = {
-            kick: %i(k kick),
-            ban: %i(b ban),
-            kickban: %i(kb kickban),
-            quiet: %i(q quiet),
-            unban: %i(ub unban),
-            unquiet: %i(uq unquiet)
+          kick: %i(k kick),
+          ban: %i(b ban),
+          kickban: %i(kb kickban),
+          quiet: %i(q quiet),
+          unban: %i(ub unban),
+          unquiet: %i(uq unquiet)
         }
       end
 
@@ -114,9 +114,7 @@ module Notaru
         name = name.downcase.to_sym
 
         @match_map.each do |k, v|
-          if v.include?(name)
-            return k
-          end
+          return k if v.include?(name)
         end
 
         nil
@@ -124,4 +122,3 @@ module Notaru
     end
   end
 end
-

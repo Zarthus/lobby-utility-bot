@@ -22,9 +22,7 @@ module Notaru
         if m.channel && m.statusmsg_mode == 'o' && m.channel.opped?(m.user)
           match = @match_regexp.match(m.message)
 
-          if match
-            banlist_process(m, match)
-          end
+          banlist_process(m, match) if match
         end
       end
 
@@ -33,19 +31,19 @@ module Notaru
       def banlist_process(m, match)
         if match[1] == 'help'
           m.reply(
-              'Usage: list (clearbans | unban | help) [timeunit] -- ' +
-                  'timeunits: hours, days, weeks, months'
+            'Usage: list (clearbans | unban | help) [timeunit] -- ' \
+                'timeunits: hours, days, weeks, months'
           )
           m.reply(
-              'Only the commands \'un*\' supports timeunits. Timeunits is a string following <number><unit> format ' +
-                  '- i.e. 1d or 1w7h '
+            'Only the commands \'un*\' supports timeunits. Timeunits is a string following <number><unit> format ' \
+                '- i.e. 1d or 1w7h '
           )
         elsif match[1].start_with?('clear')
-          if match[1] == 'clearbans'
-            info = banlist_process_unban_all(m.channel)
-          else # if match[1] == 'clearquiets'
-            info = banlist_process_unban_all(m.channel, true)
-          end
+          info = if match[1] == 'clearbans'
+                   banlist_process_unban_all(m.channel)
+                 else # if match[1] == 'clearquiets'
+                   banlist_process_unban_all(m.channel, true)
+                 end
 
           m.reply("Unbanned #{info[:unbans]} hosts (Bans since #{info[:timespan]})")
         elsif match[1] == 'unquiet' || match[1] == 'unban'
@@ -66,7 +64,7 @@ module Notaru
         len = channel.bans.length
         unban_list(channel, channel.bans, quiets)
 
-        {unbans: len, timespan: 'the beginning of time'}
+        { unbans: len, timespan: 'the beginning of time' }
       end
 
       # @param [Channel] channel
@@ -85,7 +83,7 @@ module Notaru
 
         unban_list(channel, bans, quiets)
 
-        {unbans: bans.length, timespan: timespan}
+        { unbans: bans.length, timespan: timespan }
       end
 
       # @param [Channel] channel
@@ -105,7 +103,7 @@ module Notaru
           end
         end
 
-        if hosts.length != 0
+        unless hosts.empty?
           channel.mode('-' + (char * hosts.length) + ' ' + hosts.join(' '))
         end
       end
@@ -114,21 +112,20 @@ module Notaru
       # @return [Time]
       def timespan_convert(timespan)
         units = {
-            3600 => %i(h hour hours),
-            86400 => %i(d day days),
-            604800 => %i(w week weeks),
-            2592000 => %i(m month months)
+          3600 => %i(h hour hours),
+          86_400 => %i(d day days),
+          604_800 => %i(w week weeks),
+          2_592_000 => %i(m month months)
         }
 
         total = 0
         timespan.scan(@unit_split_regexp).each do |match|
-          if match[0].to_i > 400 || total > 31104000
+          if match[0].to_i > 400 || total > 31_104_000
             log "Moving on early due to probable malformed input [match = #{match.inspect}, total = #{total}]"
             next
           end
 
           total += unit_convert(units, match[0], match[1])
-
         end
 
         Time.at(Time.now.to_i - total)
@@ -142,9 +139,7 @@ module Notaru
         unit = unit.to_sym
 
         units.each do |k, v|
-          if v.include?(unit.to_sym)
-            return k * amount.to_i
-          end
+          return k * amount.to_i if v.include?(unit.to_sym)
         end
 
         0
