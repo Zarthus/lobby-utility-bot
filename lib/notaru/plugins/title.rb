@@ -5,6 +5,8 @@ require 'unirest'
 module Notaru
   module Plugin
     class Title
+      PREFIX_REGEXP = '(?:^|\s+)!'
+
       include Cinch::Plugin
 
       def initialize(*args)
@@ -22,16 +24,22 @@ module Notaru
         @silent_on_failure = @bot.config.title_silent_on_fail
 
         # The prefix char (without ^)
-        @prefix_override = '\b' + (@bot.config.prefix_char.nil? ? '!' : @bot.config.prefix_char)
-        self.class.match(
-          Regexp.new('t(?:itle)? ([^ ]+)'), method: :cmd_title, prefix: Regexp.new(@prefix_override)
+        self.class.const_set(
+            :PREFIX_REGEXP_OVERRIDE,
+            '(?:^|\s+)' + (@bot.config.prefix_char.nil? ? '!' : @bot.config.prefix_char)
         )
 
         Unirest.user_agent("NotaruIRCBot/#{VERSION}")
       end
 
+      match Regexp.new('t(?:itle)? ([^ ]+)'), {
+          method: :cmd_title,
+          prefix: Regexp.new(
+              defined?(PREFIX_REGEXP_OVERRIDE) ? PREFIX_REGEXP_OVERRIDE : PREFIX_REGEXP
+          )
+      }
+
       def cmd_title(m, url)
-        log 'call:cmd-title'
         url = "http://#{url}" unless url.start_with?('http')
 
         uri = Addressable::URI.parse(url).normalize
