@@ -41,6 +41,7 @@ module Notaru
             if %i(kick kickban ban quiet unban unquiet).include?(name)
               unless m.channel.opped?(@bot.nick)
                 m.reply("I need to be opped in the channel to perform any administrative actions (like '#{name}')")
+                return
               end
 
               action_admin_generic(m, match, name)

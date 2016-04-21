@@ -99,7 +99,6 @@ module Notaru
           if hosts.count > 3
             channel.mode('-' + (char * 4) + ' ' + hosts.join(' '))
             hosts = []
-            unbans += 4
           end
         end
 
