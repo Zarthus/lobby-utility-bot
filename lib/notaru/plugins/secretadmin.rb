@@ -11,7 +11,7 @@ module Notaru
       def initialize(*args)
         super
 
-        prefix = @bot.config.prefix
+        prefix = @bot.config.plugins.prefix
         # Due to priority, avoid conflicts - longer strings should come first.
         @match_regexp = Regexp.new(
             "#{prefix}(kick|kickban|ban|unban|quiet|unquiet|kb|ub|uq|k|q|b)(?: ([^ ]+))?(?: (.*))?"

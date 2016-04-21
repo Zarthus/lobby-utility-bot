@@ -51,7 +51,8 @@ module Notaru
               Plugin::CoreCTCP,
               Plugin::Quotes,
               Plugin::SecretAdmin,
-              Plugin::Title
+              Plugin::Title,
+              Plugin::UnbanDate
           ]
 
           c.source_url = config['source_url'] if config['source_url']
