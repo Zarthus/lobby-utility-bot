@@ -43,8 +43,15 @@ module Notaru
 
           c.channels = config['irc']['channels']
 
-          c.plugins.prefix = /^#{Regexp.escape(config['prefix'])}/
-          c.plugins.plugins = [Plugin::AuthCheck, Plugin::AutoVoice, Plugin::CoreCTCP, Plugin::Quotes, Plugin::Title]
+          c.config.prefix_char = Regexp.escape(config['prefix'])
+          c.plugins.prefix = /^#{c.config.prefix_char}/
+          c.plugins.plugins = [
+              Plugin::AuthCheck,
+              Plugin::AutoVoice,
+              Plugin::CoreCTCP,
+              Plugin::Quotes,
+              Plugin::Title
+          ]
 
           c.source_url = config['source_url'] if config['source_url']
 

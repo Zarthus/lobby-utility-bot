@@ -21,10 +21,13 @@ module Notaru
         # Do not send any message if title could not be retrieved.
         @silent_on_failure = @bot.config.title_silent_on_fail
 
+        # The prefix char (without ^)
+        @prefix_override = '\\b' + @bot.config.prefix_char
+
         Unirest.user_agent("NotaruIRCBot/#{VERSION}")
       end
 
-      match Regexp.new('t(?:itle)? ([^ ]+)$'), method: :cmd_title
+      match Regexp.new('t(?:itle)? ([^ ]+)'), { method: :cmd_title, prefix: Regexp.new(@prefix_override) }
       def cmd_title(m, url)
         url = "http://#{url}" unless url.start_with?('http')
 
