@@ -22,12 +22,14 @@ module Notaru
         @silent_on_failure = @bot.config.title_silent_on_fail
 
         # The prefix char (without ^)
-        @prefix_override = '\\b' + @bot.config.prefix_char
+        @prefix_override = '\\b' + (@bot.config.prefix_char.nil? ? '!' : @bot.config.prefix_char)
+        self.class.match(
+            Regexp.new('t(?:itle)? ([^ ]+)'), { method: :cmd_title, prefix: Regexp.new(@prefix_override) }
+        )
 
         Unirest.user_agent("NotaruIRCBot/#{VERSION}")
       end
 
-      match Regexp.new('t(?:itle)? ([^ ]+)'), { method: :cmd_title, prefix: Regexp.new(@prefix_override) }
       def cmd_title(m, url)
         url = "http://#{url}" unless url.start_with?('http')
 
