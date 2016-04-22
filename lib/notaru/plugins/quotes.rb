@@ -6,7 +6,7 @@ module Notaru
     class Quotes
       include Cinch::Plugin
 
-      match Regexp.new('(?i)addquote (.+)', Regexp::IGNORECASE), method: :addquote
+      match Regexp.new('addquote (.+)', Regexp::IGNORECASE), method: :addquote
       match Regexp.new('quote (.+)', Regexp::IGNORECASE), method: :quote
       match Regexp.new('quote'), method: :quote
 
