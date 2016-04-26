@@ -52,7 +52,8 @@ module Notaru
             Plugin::Quotes,
             Plugin::SecretAdmin,
             Plugin::Title,
-            Plugin::UnbanDate
+            Plugin::UnbanDate,
+            Plugin::Notaru
           ]
 
           c.source_url = config['source_url'] if config['source_url']
