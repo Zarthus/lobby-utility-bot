@@ -7,7 +7,9 @@ module Notaru
       def cmd_notaru(m, command)
         if m.channel.opped?(m.user)
           if command == 'help'
-            m.user.notice('Usage: notaru [help | retainnick]')
+            m.user.notice('Usage: notaru [help | docs | retainnick]')
+          elsif command == 'docs'
+            m.reply('Notaru extended docs: https://github.com/Zarthus/lobby-utility-bot/wiki')
           elsif command == 'retainnick'
             m.reply(retainnick)
           end
