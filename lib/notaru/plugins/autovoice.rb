@@ -127,7 +127,7 @@ module Notaru
 
       match Regexp.new('devoiceme$'), method: :cmd_devoice_me
       def cmd_devoice_me(m)
-        devoice(m)
+        m.channel.devoice(m.user)
       end
 
       def check_voices
