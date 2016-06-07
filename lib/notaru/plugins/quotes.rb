@@ -7,8 +7,7 @@ module Notaru
       include Cinch::Plugin
 
       match Regexp.new('addquote (.+)', Regexp::IGNORECASE), method: :addquote
-      match Regexp.new('quote (.+)', Regexp::IGNORECASE), method: :quote
-      match Regexp.new('quote'), method: :quote
+      match Regexp.new('quote(?: (.+))?', Regexp::IGNORECASE), method: :quote
 
       def initialize(*args)
         super
