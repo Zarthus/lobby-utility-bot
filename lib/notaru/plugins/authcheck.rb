@@ -64,7 +64,8 @@ module Notaru
           msks = msks.empty? ? 'none' : msks
 
           m.reply('Banned masks: ' + msks + ' | Exempted masks (preserved until shutdown): ' + exmpt)
-
+          m.reply((@kick_first ? "First time will be a kick, second violation will result in ban" : "User will be banned") +
+		" for " + timeout_to_s)
           unless m.channel.opped?(@bot)
             m.reply('Note: I need to be opped in this channel to function.')
           end
