@@ -46,7 +46,7 @@ module Notaru
 
         if title && !title.empty?
           m.reply(@format % {
-            title: title,
+            title: title.chomp,
             url: url,
             host: uri.host,
             nick: m.user.nick
@@ -77,7 +77,7 @@ module Notaru
           return false
         end
 
-        Nokogiri::HTML(html).css('title').text.chomp
+        Nokogiri::HTML(html).css('title').text
       end
 
       # @param url [Addressable::URI]
