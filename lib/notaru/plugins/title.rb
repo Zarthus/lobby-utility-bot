@@ -46,7 +46,7 @@ module Notaru
 
         if title && !title.empty?
           m.reply(@format % {
-            title: title.chomp,
+            title: title.gsub(/\s+/, ' ').strip,
             url: url,
             host: uri.host,
             nick: m.user.nick
