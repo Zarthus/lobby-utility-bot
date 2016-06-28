@@ -77,7 +77,7 @@ module Notaru
           return false
         end
 
-        Nokogiri::HTML(html).css('title').text
+        Nokogiri::HTML(html).css('title').text.chomp
       end
 
       # @param url [Addressable::URI]
