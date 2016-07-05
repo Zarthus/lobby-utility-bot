@@ -11,7 +11,7 @@ module Notaru
 
       match Regexp.new(/(https?:\/\/[^ ]+)/i), method: :cmd_shorten, use_prefix: false
       def cmd_shorten(m, url)
-        if url.length > 64
+        if url.length > 80
           begin
             shortened = ShortURL.shorten(url, :tinyurl)
             m.reply "Shortened: #{shortened}"
