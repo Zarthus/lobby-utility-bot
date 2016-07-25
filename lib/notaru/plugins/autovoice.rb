@@ -167,7 +167,8 @@ module Notaru
       end
 
       def on_kick(m)
-        remove(m.user, m.channel) if find(m.user, m.channel)
+        kicked = User(m.params[1])
+        remove(kicked, m.channel) if find(kicked, m.channel)
       end
 
       def on_part(m)
