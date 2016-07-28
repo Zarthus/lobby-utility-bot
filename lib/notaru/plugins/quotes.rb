@@ -33,20 +33,20 @@ module Notaru
         output.close
 
         # send reply that quote was added
-        m.reply "#{m.user.nick}: Quote successfully added as ##{new_quote_index + 1}."
+        m.reply "#{m.user.nick}: Quote successfully added as \\#{new_quote_index + 1}."
       end
 
       def quote(m, search = nil)
         quotes = retrieve_quotes.delete_if { |q| q['deleted'] == true }
         if search.nil? # we are pulling random
           quote = quotes.sample
-          m.reply "#{m.user.nick}: ##{quote['id']} - #{quote['quote']}"
+          m.reply "#{m.user.nick}: \\#{quote['id']} - #{quote['quote']}"
         elsif search.to_i != 0 # then we are searching by id
           quote = quotes.find { |q| q['id'] == search.to_i }
           if quote.nil?
             m.reply "#{m.user.nick}: No quotes found."
           else
-            m.reply "#{m.user.nick}: ##{quote['id']} - #{quote['quote']}"
+            m.reply "#{m.user.nick}: \\#{quote['id']} - #{quote['quote']}"
           end
         else
           quotes.keep_if { |q| q['quote'].downcase.include?(search.downcase) }
@@ -54,7 +54,7 @@ module Notaru
             m.reply "#{m.user.nick}: No quotes found."
           else
             quote = quotes.first
-            m.reply "#{m.user.nick}: ##{quote['id']} - #{quote['quote']}"
+            m.reply "#{m.user.nick}: \\#{quote['id']} - #{quote['quote']}"
             m.reply "The search term also matched on quote IDs: #{quotes.map { |q| q['id'] }.join(', ')}" if quotes.size > 1
           end
         end
