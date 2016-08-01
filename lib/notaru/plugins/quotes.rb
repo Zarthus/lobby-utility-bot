@@ -82,7 +82,7 @@ module Notaru
           if new_quote.include?(user.nick)
             repl = user.nick.gsub("", "\u200D")
             log "quote: found name #{user.nick}, replacing with ZWS"
-            new_quote.gsub!(Regexp.escape(user.nick), repl)
+            new_quote.gsub!(user.nick, repl)
           end
         end
 
