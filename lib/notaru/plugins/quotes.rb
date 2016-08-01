@@ -40,13 +40,13 @@ module Notaru
         quotes = retrieve_quotes.delete_if { |q| q['deleted'] == true }
         if search.nil? # we are pulling random
           quote = quotes.sample
-          m.reply "#{m.user.nick}: \\#{quote['id']} - #{quote['quote']}"
+          m.reply "#{m.user.nick}: \\#{quote['id']} - #{fmt_quote(quote['quote'])}"
         elsif search.to_i != 0 # then we are searching by id
           quote = quotes.find { |q| q['id'] == search.to_i }
           if quote.nil?
             m.reply "#{m.user.nick}: No quotes found."
           else
-            m.reply "#{m.user.nick}: \\#{quote['id']} - #{quote['quote']}"
+            m.reply "#{m.user.nick}: \\#{quote['id']} - #{fmt_quote(quote['quote'])}"
           end
         else
           quotes.keep_if { |q| q['quote'].downcase.include?(search.downcase) }
@@ -54,7 +54,7 @@ module Notaru
             m.reply "#{m.user.nick}: No quotes found."
           else
             quote = quotes.first
-            m.reply "#{m.user.nick}: \\#{quote['id']} - #{quote['quote']}"
+            m.reply "#{m.user.nick}: \\#{quote['id']} - #{fmt_quote(quote['quote'])}"
             m.reply "The search term also matched on quote IDs: #{quotes.map { |q| q['id'] }.join(', ')}" if quotes.size > 1
           end
         end
@@ -72,6 +72,21 @@ module Notaru
         output.close
 
         quotes
+      end
+
+      def fmt_quote(quote)
+        new_quote = quote
+        userlist = @bot.user_list.sort_by { |x| x.nick.length }
+        
+        userlist.each do |user|
+          if new_quote.include?(user.nick)
+            repl = user.nick.gsub("", "\u200D")
+            log "quote: found name #{user.nick}, replacing with ZWS"
+            new_quote.gsub!(user.nick, repl)
+          end
+        end
+
+        return new_quote
       end
     end
   end
