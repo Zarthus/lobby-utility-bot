@@ -53,7 +53,7 @@ module Notaru
             Plugin::SecretAdmin,
             Plugin::Title,
             Plugin::UnbanDate,
-            Plugin::Shorten,
+            # Plugin::Shorten,
             Plugin::Notaru
           ]
 
