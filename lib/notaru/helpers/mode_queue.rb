@@ -92,17 +92,16 @@ module Notaru
     def execute(bot)
       return unless count != 0
 
-      modes = parse false
-
+      modes = parse(false)
+      empty
+ 
       if modes
         modes.each do |perform|
           bot.irc.send perform
           sleep(0.5)
         end
       end
-
-      empty
-    end
+   end
 
     def valid?(str)
       regex = Regexp.new('MODE ([^ ]+) ([^ ]+)(?: (.*))?')
