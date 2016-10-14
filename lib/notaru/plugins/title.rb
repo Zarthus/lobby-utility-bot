@@ -38,9 +38,8 @@ module Notaru
               defined?(PREFIX_REGEXP_OVERRIDE) ? PREFIX_REGEXP_OVERRIDE : PREFIX_REGEXP
             )
 
-      def cmd_title(m, url)
+      def cmd_title(m, url, try_again = true)
         url = "http://#{url}" unless url.start_with?('http')
-
         uri = Addressable::URI.parse(url).normalize
         title = find_title(uri)
 
@@ -52,6 +51,10 @@ module Notaru
             nick: m.user.nick
           })
         elsif title && title.empty?
+          if try_again && (/imgur.com\/[^.]+(\.\w+)$/i.match(url) || /(\.(?:jpg|jpeg|png|gif|gifv|svg))$/i.match(url))
+            return cmd_title(m, url.sub($1, ''), false)
+          end
+
           unless @silent_on_failure
             m.user.notice("Could not retrieve a valid title from #{uri.host}")
           end
