@@ -6,7 +6,7 @@ module Notaru
     class Quotes
       include Cinch::Plugin
 
-      match Regexp.new('addquote (.+)', Regexp::IGNORECASE), method: :addquote
+      match Regexp.new('addquote (.+)|quoteadd (.+)', Regexp::IGNORECASE), method: :addquote
       match Regexp.new('quote(?: (.+))?', Regexp::IGNORECASE), method: :quote
 
       def initialize(*args)
@@ -16,12 +16,15 @@ module Notaru
       end
 
       def addquote(m, quote)
-        unless m.channel.opped?(m.user)
-          return m.reply("Only channel ops can add quotes.")
+        if !m.channel.opped?(m.user) && !m.user.authed?
+          return m.reply("Only channel ops and registered users can add quotes.")
         end
 
         # make the quote
-        new_quote = { 'quote' => quote, 'added_by' => m.user.nick, 'created_at' => Time.now, 'deleted' => false }
+        new_quote = { 'quote' => quote,
+                      'added_by' => m.user.authed? ? m.user.authname : m.user.nick,
+                      'created_at' => Time.now.utc,
+                      'deleted' => false }
 
         # add it to the list
         existing_quotes = retrieve_quotes || []
