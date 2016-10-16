@@ -23,17 +23,6 @@ irc:
     - "#notlobby"
 
 plugin:
-  autovoice:
-    voice_timer_interval: 60
-    voice_minute_idle: 20
-    voice_queue_timer: 5
-    smart_away: true
-    name_away_regex: "/Away$|Sleep$/i"
-  title:
-    format: "Title: '%{title}' at %{host}"
-    ignore:
-      - '/google\.com/'
-    silent_on_failure: false
   authcheck:
     channels:
       - "#notlobby"
@@ -43,7 +32,20 @@ plugin:
     kick_first: true
     timeout: 180
     reason_format: "You need to be authenticated with NickServ to join %{channel}, see '/msg NickServ HELP REGISTER' for more information."
-
+  autovoice:
+    voice_timer_interval: 60
+    voice_minute_idle: 20
+    voice_queue_timer: 5
+    smart_away: true
+    name_away_regex: "/Away$|Sleep$/i"
+  quotes: # can optionally run https://github.com/Zarthus/notaru-quotes
+    url: false
+  title:
+    format: "Title: '%{title}' at %{host}"
+    ignore:
+      - '/google\.com/'
+    silent_on_failure: false
+ 
 logging: true
 prefix: "!"
 source_url: "https://github.com/zarthus/lobby-utility-bot/"

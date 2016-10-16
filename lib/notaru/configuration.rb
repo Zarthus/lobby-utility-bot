@@ -79,7 +79,8 @@ module Notaru
           alt_storage = File.join(Dir.back(c.root, 2), 'storage')
           c.smart_away = config['plugin']['autovoice']['smart_away']
           c.storage = File.join(config['storage_path'] || alt_storage)
-          c.plugins.options[Plugin::Quotes] = { quotes_file: File.join(__dir__, '/../../conf/quotes.yml') }
+          c.plugins.options[Plugin::Quotes] = { quotes_file: File.join(__dir__, '/../../conf/quotes.yml'),
+                                                quotes_url: config['plugin']['quotes']['url'] }
         end
       end
     end
