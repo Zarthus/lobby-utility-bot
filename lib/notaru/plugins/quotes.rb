@@ -90,8 +90,15 @@ module Notaru
         qret = retrieve_quotes()
         del_count = qret.reject { |q| !q['deleted'] }.size
         chan_count = qret.reject { |q| q['channel'] != m.channel.name }.size
+        highest_idx = 0
+        qidx = qret.each do |q| 
+          if q["id"] > highest_idx
+            highest_idx = q["id"]
+          end
+        end
 
-        m.reply("Quotes: #{qret.size()} quotes are found, of which #{del_count} are deleted, and #{chan_count} from this channel.")
+        m.reply("Quotes: #{qret.size()} quotes are found, of which #{del_count} are deleted, and #{chan_count} from this channel." +
+                " The latest quote to be added is ID \\#{highest_idx}")
       end
 
       def quote(m, search = nil)
