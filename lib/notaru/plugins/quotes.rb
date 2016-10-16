@@ -16,13 +16,14 @@ module Notaru
       end
 
       def addquote(m, quote)
-        if !m.channel.opped?(m.user) && !m.user.authed?
+        if m.channel && !m.channel.opped?(m.user) && !m.user.authed?
           return m.reply("Only channel ops and registered users can add quotes.")
         end
 
         # make the quote
         new_quote = { 'quote' => quote,
                       'added_by' => m.user.authed? ? m.user.authname : m.user.nick,
+                      'channel' => m.channel.name,
                       'created_at' => Time.now.utc,
                       'deleted' => false }
 
