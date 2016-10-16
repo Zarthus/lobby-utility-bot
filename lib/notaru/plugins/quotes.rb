@@ -1,3 +1,4 @@
+require 'time'
 require 'cinch'
 require 'yaml'
 
@@ -6,13 +7,15 @@ module Notaru
     class Quotes
       include Cinch::Plugin
 
-      match Regexp.new('addquote (.+)|quoteadd (.+)', Regexp::IGNORECASE), method: :addquote
+      match Regexp.new('(?:addquote|quoteadd) (.+)', Regexp::IGNORECASE), method: :addquote
       match Regexp.new('quote(?: (.+))?', Regexp::IGNORECASE), method: :quote
+      match Regexp.new('(?:delquote|quotedel|undelquote|quoteundel) (\d+)', Regexp::IGNORECASE), method: :delquote
 
       def initialize(*args)
         super
 
         @quotes_file = config[:quotes_file]
+        @quotes_url = config[:quotes_url]
       end
 
       def addquote(m, quote)
@@ -44,6 +47,34 @@ module Notaru
         m.reply "#{m.user.nick}: Quote successfully added as \\#{new_quote_index + 1}."
       end
 
+      def delquote(m, quote_id)
+        if m.channel && m.channel.opped?(m.user)
+          return m.reply('You need to be a channel op to remove or restore quotes.')
+        end
+
+        existing_quotes = retrieve_quotes || []
+        target_quote = existing_quotes.delete_if { |q| q['id'] != quote_id || q['channel'] != m.channel.name }
+
+        if target_quote.empty?
+          return m.reply('No quote with that ID found.')
+        end
+
+        target_quote['deleted'] = !target_quote['deleted']
+        idx = existing_quotes.find_index { |q| q['id'] == target_quote['id'] }
+
+        if idx.nil?
+          return m.reply('Failed to alter quote database.')
+        end
+
+        existing_quotes[idx] = target_quote
+
+        output = File.new(@quotes_file, 'w')
+        output.puts YAML.dump(existing_quotes)
+        output.close
+
+        m.reply('Successfully ' + (target_quote['deleted'] ? 'deleted' : 'restored') + ' quote ID ' + target_quote['id'])
+      end
+
       def quote(m, search = nil)
         quotes = retrieve_quotes.delete_if { |q| q['deleted'] == true }
         if search.nil? # we are pulling random
@@ -64,6 +95,9 @@ module Notaru
             quote = quotes.first
             m.reply "#{m.user.nick}: \\#{quote['id']} - #{fmt_quote(quote['quote'])}"
             m.reply "The search term also matched on quote IDs: #{quotes.map { |q| q['id'] }.join(', ')}" if quotes.size > 1
+            if quotes.size > 3 && @quotes_url
+                m.reply "You can view them all here: " + @quotes_url + "?quotes=" + quotes.map { |q| q['id'] }.join(',')
+            end
           end
         end
       end
