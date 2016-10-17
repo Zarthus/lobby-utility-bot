@@ -151,7 +151,7 @@ module Notaru
         
         userlist.each do |user|
           if new_quote.include?(user.nick)
-            repl = user.nick.gsub("", "\u200D")
+            repl = user.nick.gsub("", "\u200B")
             log "quote: found name #{user.nick}, replacing with ZWS"
             new_quote.gsub!(user.nick, repl)
           end
