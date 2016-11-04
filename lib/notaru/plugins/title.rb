@@ -30,15 +30,27 @@ module Notaru
         )
 
         Unirest.user_agent("NotaruIRCBot/#{VERSION}")
+
+        @last_recorded_url = nil
       end
 
-      match Regexp.new('t(?:itle)? ([^ ]+)'),
+      match Regexp.new('t(?:itle)?(?: ([^ ]+))?'),
             method: :cmd_title,
             prefix: Regexp.new(
               defined?(PREFIX_REGEXP_OVERRIDE) ? PREFIX_REGEXP_OVERRIDE : PREFIX_REGEXP
             )
+      match Regexp.new('(https?:\/\/[^\s]+)'), method: :record_url, use_prefix: false
 
       def cmd_title(m, url, try_again = true)
+        unless url
+          unless @last_recorded_url
+            return m.user.notice("No last-known URL (last_recorded_url = #{@last_recorded_url.inspect}), " +
+              "please supply the optional argument 'url'.")
+          end
+
+          url = @last_recorded_url
+        end
+
         url = "http://#{url}" unless url.start_with?('http')
         uri = Addressable::URI.parse(url).normalize
         title = find_title(uri)
@@ -63,6 +75,10 @@ module Notaru
             m.user.notice('Sorry, I was unable to retrieve the title.')
           end
         end
+      end
+
+      def record_url(m, url)
+        @last_recorded_url = url
       end
 
       # @param uri [Addressable::URI]
