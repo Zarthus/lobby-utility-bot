@@ -32,6 +32,14 @@ module Notaru
         Unirest.user_agent("NotaruIRCBot/#{VERSION}")
 
         @last_recorded_url = nil
+        @last_title_url = nil
+        @warnings = {}
+        @warning_ban_duration = 10
+        @warning_reset_timer = 60 * 60 * 6
+
+        Timer(@warning_reset_timer) do
+            @warnings = {}
+        end
       end
 
       match Regexp.new('t(?:itle)?(?: ([^ ]+))?'),
@@ -49,9 +57,16 @@ module Notaru
           end
 
           url = @last_recorded_url
-        end
+       end
 
         url = "http://#{url}" unless url.start_with?('http')
+
+        if !@last_title_url.nil? && @last_title_url == url
+          warn_user(m)
+          @last_recorded_url = nil
+          return
+        end
+
         uri = Addressable::URI.parse(url).normalize
         title = find_title(uri)
 
@@ -62,6 +77,8 @@ module Notaru
             host: uri.host,
             nick: m.user.nick
           })
+          @last_title_url = url
+          @last_recorded_url = nil
         elsif title && title.empty?
           if try_again && (/imgur.com\/[^.]+(\.\w+)$/i.match(url) || /(\.(?:jpg|jpeg|png|gif|gifv|svg))$/i.match(url))
             return cmd_title(m, url.sub($1, ''), false)
@@ -123,6 +140,48 @@ module Notaru
         return false if response.code != 200
 
         response.body
+      end
+
+      def warn_user(m)
+        if m.channel.opped?(m.user)
+          return
+        end
+
+        unless @warnings.key?(m.user)
+          @warnings[m.user] = 0
+        end
+
+        @warnings[m.user] += 1
+        message = "Please don't re-trigger the title command. (#{@warnings[m.user]}/4 times)"
+
+        if @warnings[m.user] == 2
+          m.user.notice(message)
+        elsif @warnings[m.user] == 3
+          m.channel.kick(m.user, message)
+        elsif @warnings[m.user] == 4
+          @warnings[m.user] = 0
+          timeout_user(m, message + " [#{@warning_ban_duration} minute ban]")
+        else
+          m.reply("I'm sorry, Dave. I'm afraid I can't do that.")
+        end
+      end
+
+      # @param [Message] m
+      def timeout_user(m, reason)
+        mask = m.user.mask('*!%u@%h')
+        reason = reason % {
+          nick: m.user.nick,
+          user: m.user.user,
+          host: m.user.host,
+          channel: m.channel.name
+        }
+
+        m.channel.ban(mask)
+        m.channel.kick(m.user, reason)
+
+        Timer(@warning_ban_duration * 60, shots: 1) do
+          m.channel.unban(mask)
+        end
       end
     end
   end
