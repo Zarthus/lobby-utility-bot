@@ -35,8 +35,19 @@ module Notaru
         timeout_user(m)
       end
 
+      # <@Zarthus> i'm thinking of adding a way to circumvent the authcheck for regulars
+      # <@Zarthus> like '/msg notaru !authcheck bypass' -- only something regulars will remember.
+      # <@Stomach> That's about four too many words :(
+      # <@Zarthus> so what do you suggest
+      # <@Stomach> Something like !butt 
+      # <@Stomach> That's easy to remember
+      match Regexp.new('butts?'), method: :bypass
       match Regexp.new('authcheck ([^ ]+)(?: ([^ ]+))?'), method: :authcheck
       def authcheck(m, command, option = nil)
+        if m.channel.nil? && command == 'bypass'
+          return bypass(m)
+        end
+
         return unless @channels.include?(m.channel.name)
 
         unless m.channel.opped?(m.user)
@@ -137,6 +148,11 @@ module Notaru
         return "#{minutes} minutes" if minutes > 1
 
         "#{@timeout} seconds"
+      end
+
+      def bypass(m)
+          @exempt << Cinch::Mask.from(m.user)
+          m.reply("You're now bypassing the authcheck filter.")
       end
     end
   end
