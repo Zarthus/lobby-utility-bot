@@ -1,6 +1,7 @@
 require 'addressable/uri'
 require 'nokogiri'
 require 'unirest'
+require 'twitch'
 
 module Notaru
   module Plugin
@@ -37,6 +38,12 @@ module Notaru
         @warning_ban_duration = 10
         @warning_reset_timer = 60 * 60 * 6
 
+        @twitch = nil
+        if @bot.config.twitch_enabled
+          tw = @bot.config.twitch
+          @twitch = Twitch.new(tw['client_id'], tw['secret_key'], tw['redirect_uri'], tw['scope'])
+        end
+
         Timer(@warning_reset_timer) do
             @warnings = {}
         end
@@ -65,6 +72,23 @@ module Notaru
           warn_user(m)
           @last_recorded_url = nil
           return
+        end
+
+        if url =~ /twitch\.tv\/([^ ]+)/
+          tw_info = nil
+
+          begin
+            tw_info = find_twitch_title($1)
+          rescue => e
+            m.user.notice("Failed to parse twitch title: #{e}")
+          end
+
+          if tw_info
+            m.reply(tw_info)
+          end
+
+          info "Found a twitch link (#{url}): #{info.inspect}"
+          return unless @twitch.nil?
         end
 
         uri = Addressable::URI.parse(url).normalize
@@ -114,6 +138,20 @@ module Notaru
         end
 
         Nokogiri::HTML(html).css('title').text
+      end
+
+      def find_twitch_title(user)
+        return false unless @twitch
+
+        fmt = "Twitch: %{broadcaster} playing %{game} with %{viewers} viewers: %{status}"
+        stream = @twitch.stream(user)
+
+        fmt % {
+          broadcaster: stream["channel"]["display_name"],
+          game: stream["game"],
+          viewers: stream["viewers"],
+          status: stream["channel"]["status"]
+        }
       end
 
       # @param url [Addressable::URI]

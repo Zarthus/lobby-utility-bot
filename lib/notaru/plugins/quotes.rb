@@ -91,7 +91,7 @@ module Notaru
         del_count = qret.reject { |q| !q['deleted'] }.size
         chan_count = qret.reject { |q| q['channel'] != m.channel.name }.size
         highest_idx = 0
-        qidx = qret.each do |q| 
+        qidx = qret.each do |q|
           if q["id"] > highest_idx
             highest_idx = q["id"]
           end
@@ -148,7 +148,7 @@ module Notaru
       def fmt_quote(quote)
         new_quote = quote
         userlist = @bot.user_list.sort_by { |x| x.nick.length }
-        
+
         userlist.each do |user|
           if new_quote.include?(user.nick)
             repl = user.nick.gsub("", "\u200B")
