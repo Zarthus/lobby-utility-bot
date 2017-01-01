@@ -41,7 +41,16 @@ module Notaru
         @twitch = nil
         if @bot.config.twitch_enabled
           tw = @bot.config.twitch
-          @twitch = Twitch.new(tw['client_id'], tw['secret_key'], tw['redirect_uri'], tw['scope'])
+          @twitch = Twitch.new({
+            client_id: tw['client_id'],
+            secret_key: tw['secret_key'],
+            redirect_uri: tw['redirect_uri'],
+            scope: tw['scope']
+          })
+
+          #@twitch.auth()
+
+          info "Initialized twitch titles."
         end
 
         Timer(@warning_reset_timer) do
@@ -76,7 +85,6 @@ module Notaru
 
         if url =~ /twitch\.tv\/([^ ]+)/
           tw_info = nil
-
           begin
             tw_info = find_twitch_title($1)
           rescue => e
@@ -87,7 +95,7 @@ module Notaru
             m.reply(tw_info)
           end
 
-          info "Found a twitch link (#{url}): #{info.inspect}"
+          info "Found a twitch link (#{url.to_s}): #{tw_info.inspect}"
           return unless @twitch.nil?
         end
 
@@ -144,13 +152,20 @@ module Notaru
         return false unless @twitch
 
         fmt = "Twitch: %{broadcaster} playing %{game} with %{viewers} viewers: %{status}"
-        stream = @twitch.stream(user)
+        request = @twitch.stream(user)[:body]
+
+        if !request || request.code != 200
+          error request ? request.body.to_s : request.inspect
+          return "HTTP Request returned status of #{request.code}." +
+              (request['message'].nil? ? "" : " Message: " + request['message'] + ".") +
+              " More info in logs."
+        end
 
         fmt % {
-          broadcaster: stream["channel"]["display_name"],
-          game: stream["game"],
-          viewers: stream["viewers"],
-          status: stream["channel"]["status"]
+          broadcaster: request["channel"]["display_name"],
+          game: request["game"],
+          viewers: request["viewers"],
+          status: request["channel"]["status"]
         }
       end
 
