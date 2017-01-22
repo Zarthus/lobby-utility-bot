@@ -51,8 +51,8 @@ module Notaru
         end
       end
 
-      match Regexp.new('autovoice (on|off|status|purge|reset|debug)$'), method: :cmd_autovoice
-      def cmd_autovoice(m, option)
+      match Regexp.new('autovoice (on|off|status|purge|reset|debug)( -clever)?$'), method: :cmd_autovoice
+      def cmd_autovoice(m, option, no_clever = false)
         if m.channel.opped?(m.user)
           if option == 'on'
             if enabled?(m.channel)
@@ -66,9 +66,11 @@ module Notaru
               return m.reply 'Autovoice for this channel is already disabled!'
             end
 
-            @autovoice[m.channel].each do |vusers|
-              vusers.each do |vuser|
-                queue_devoice(m.channel, vuser, false)
+            @autovoice[m.channel].each do |vuser|
+              if no_clever
+                m.channel.devoice(vuser.user)
+              else
+                queue_devoice(m.channel, vuser.user)
               end
             end
 
@@ -97,10 +99,12 @@ module Notaru
             affected = @autovoice[m.channel].count
             m.reply "Purging AutoVoice list. #{affected} users are affected."
 
-            @autovoice[m.channel].each do |vusers|
-              vusers.each do |vuser|
-                queue_devoice(m.channel, vuser)
-              end
+            @autovoice[m.channel].each do |vuser|
+                if no_clever
+                  m.channel.devoice(vuser.user)
+                else
+                  queue_devoice(m.channel, vuser.user)
+                end
             end
 
             @autovoice[m.channel] = []
