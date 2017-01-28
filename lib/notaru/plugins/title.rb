@@ -42,7 +42,7 @@ module Notaru
         end
       end
 
-      match Regexp.new('t(?:itle)?(?: ([^ ]+))?'),
+      match Regexp.new('t(?:its?(?:le)?)?(?: ([^ ]+))?'),
             method: :cmd_title,
             prefix: Regexp.new(
               defined?(PREFIX_REGEXP_OVERRIDE) ? PREFIX_REGEXP_OVERRIDE : PREFIX_REGEXP
