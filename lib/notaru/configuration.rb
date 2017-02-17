@@ -49,6 +49,7 @@ module Notaru
             Plugin::AuthCheck,
             Plugin::AutoVoice,
             Plugin::CoreCTCP,
+            Plugin::Conversion,
             Plugin::Quotes,
             Plugin::SecretAdmin,
             Plugin::Title,
