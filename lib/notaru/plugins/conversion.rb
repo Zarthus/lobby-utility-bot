@@ -13,7 +13,7 @@ module Notaru
           @stored_temperature = nil
       end
 
-      match /c(?:onvert)?(?: (.*))?/, method: :convert_temperature_from_message
+      match /!c(?:onvert)?(?: (.*))?/, method: :convert_temperature_from_message, use_prefix: false
       match /murica(?: (.*))?/, method: :convert_temperature_from_message
       match TEMPERATURE_REGEX, method: :store_temperature, use_prefix: false
       match /di(?:stance)? (?<amount>\d{1,12})\s*(?<unit>km|mi|kilometers|miles)/i, method: :convert_distance
