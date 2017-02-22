@@ -64,6 +64,9 @@ module Notaru
           c.title_ignore = config['plugin']['title']['ignore'] || []
           c.title_silent_on_fail = config['plugin']['title']['silent_on_failure']
 
+          c.twitch = config['plugin']['title']['twitch']
+          c.twitch_enabled = config['plugin']['title']['twitch']['client_secret'].nil?
+
           c.authcheck_channels = config['plugin']['authcheck']['channels'] || []
           c.authcheck_masks = config['plugin']['authcheck']['masks'] || []
           c.authcheck_kick_first = config['plugin']['authcheck']['kick_first'].nil? ? true : config['plugin']['authcheck']['kick_first']

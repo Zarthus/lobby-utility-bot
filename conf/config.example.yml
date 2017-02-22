@@ -45,7 +45,14 @@ plugin:
     ignore:
       - '/google\.com/'
     silent_on_failure: false
- 
+    # Provide Twitch API support. Leave the values at null to disable Twitch.tv lookups.
+    # Get these values with `curl -H 'Accept: application/vnd.twitchtv.v5+json' -H 'Authorization: OAuth $YOUR_OAUTH_TOKEN' -X GET https://api.twitch.tv/kraken`
+    twitch:
+      client_id: null
+      secret_key: null
+      redirect_uri: null
+      scope: null
+
 logging: true
 prefix: "!"
 source_url: "https://github.com/zarthus/lobby-utility-bot/"

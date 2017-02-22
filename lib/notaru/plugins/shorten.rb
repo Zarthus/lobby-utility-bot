@@ -7,7 +7,7 @@ module Notaru
 
       def initialize(*args)
         super
-      end	
+      end
 
       match Regexp.new(/(https?:\/\/[^ ]+)/i), method: :cmd_shorten, use_prefix: false
       def cmd_shorten(m, url)

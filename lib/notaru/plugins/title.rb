@@ -1,6 +1,7 @@
 require 'addressable/uri'
 require 'nokogiri'
 require 'unirest'
+require 'twitch'
 
 module Notaru
   module Plugin
@@ -37,6 +38,21 @@ module Notaru
         @warning_ban_duration = 10
         @warning_reset_timer = 60 * 60 * 6
 
+        @twitch = nil
+        if @bot.config.twitch_enabled
+          tw = @bot.config.twitch
+          @twitch = Twitch.new({
+            client_id: tw['client_id'],
+            secret_key: tw['secret_key'],
+            redirect_uri: tw['redirect_uri'],
+            scope: tw['scope']
+          })
+
+          #@twitch.auth()
+
+          info "Initialized twitch titles."
+        end
+
         Timer(@warning_reset_timer) do
             @warnings = {}
         end
@@ -65,6 +81,22 @@ module Notaru
           warn_user(m)
           @last_recorded_url = nil
           return
+        end
+
+        if url =~ /twitch\.tv\/([^ ]+)/
+          tw_info = nil
+          begin
+            tw_info = find_twitch_title($1)
+          rescue => e
+            m.user.notice("Failed to parse twitch title: #{e}")
+          end
+
+          if tw_info
+            m.reply(tw_info)
+          end
+
+          info "Found a twitch link (#{url.to_s}): #{tw_info.inspect}"
+          return unless @twitch.nil?
         end
 
         uri = Addressable::URI.parse(url).normalize
@@ -114,6 +146,27 @@ module Notaru
         end
 
         Nokogiri::HTML(html).at_css('head title').text
+      end
+
+      def find_twitch_title(user)
+        return false unless @twitch
+
+        fmt = "Twitch: %{broadcaster} playing %{game} with %{viewers} viewers: %{status}"
+        request = @twitch.stream(user)[:body]
+
+        if !request || request.code != 200
+          error request ? request.body.to_s : request.inspect
+          return "HTTP Request returned status of #{request.code}." +
+              (request['message'].nil? ? "" : " Message: " + request['message'] + ".") +
+              " More info in logs."
+        end
+
+        fmt % {
+          broadcaster: request["channel"]["display_name"],
+          game: request["game"],
+          viewers: request["viewers"],
+          status: request["channel"]["status"]
+        }
       end
 
       # @param url [Addressable::URI]

@@ -8,6 +8,7 @@ gem 'addressable'
 gem 'nokogiri'
 gem 'shorturl'
 gem 'unirest', git: 'https://github.com/Mashape/unirest-ruby.git'
+gem 'twitch'
 
 group :test do
   gem 'rspec'
