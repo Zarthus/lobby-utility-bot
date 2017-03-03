@@ -4,7 +4,7 @@ module Notaru
       include Cinch::Plugin
 
       # https://regex101.com/r/msRWP9/5
-      CHANNEL_MENTION_REGEX = Regexp.new(/(?:\s|^)(#(?!\d+(?:\s+|\b|$))[\w-.]+)(?:\s|\b|$)/)
+      CHANNEL_MENTION_REGEX = Regexp.new(/(?:\s|^)(#(?!\d+(?:\s+|\b|$))[\w\-.]+)(?:\s|\b|$)/)
 
       def initialize(*args)
           super
