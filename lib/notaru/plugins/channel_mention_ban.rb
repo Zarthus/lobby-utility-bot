@@ -123,7 +123,7 @@ module Notaru
         end
 
         if m.channel.opped?(m.user)
-          return Target("@" + m.channel.name).send("User #{m.user.name} triggered channel message, but was opped.")
+          return Target("@" + m.channel.name).send("User #{m.user.name} triggered channel-mentioning message, but was opped.")
         end
 
         debug "Caught channel in message: #{m.message}"
