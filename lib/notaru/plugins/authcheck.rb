@@ -39,7 +39,7 @@ module Notaru
       # <@Zarthus> like '/msg notaru !authcheck bypass' -- only something regulars will remember.
       # <@Stomach> That's about four too many words :(
       # <@Zarthus> so what do you suggest
-      # <@Stomach> Something like !butt 
+      # <@Stomach> Something like !butt
       # <@Stomach> That's easy to remember
       match Regexp.new('butts?'), method: :bypass
       match Regexp.new('authcheck ([^ ]+)(?: ([^ ]+))?'), method: :authcheck

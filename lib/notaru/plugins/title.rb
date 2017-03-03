@@ -144,6 +144,7 @@ module Notaru
 
       def warn_user(m)
         if m.channel.opped?(m.user)
+          Target("@" + m.channel.name).send("Tried to warn #{m.user.name} for re-using titles, but they were opped.")
           return
         end
 

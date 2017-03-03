@@ -5,7 +5,7 @@ module Notaru
 
       # https://regex101.com/r/KVu6rR/1
       TEMPERATURE_REGEX = Regexp.new(/(?<amount>-?\d{1,8}(?:\.\d{1,8})?)[^\S\n]*(?<degrees>°|deg(?:rees?)?|in)?[^\S\n]*(?<unit>c(?:(?=el[cs]ius\b|entigrades?\b|\b))|f(?:(?=ahrenheit\b|\b))|k(?:(?=elvins?\b|\b)))/i)
- 
+
       DEGR = "°"
 
       def initialize(*args)
