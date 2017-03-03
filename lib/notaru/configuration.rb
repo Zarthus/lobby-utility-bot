@@ -48,6 +48,7 @@ module Notaru
           c.plugins.plugins = [
             Plugin::AuthCheck,
             Plugin::AutoVoice,
+            Plugin::ChannelMentionBan,
             Plugin::CoreCTCP,
             Plugin::Conversion,
             Plugin::Quotes,

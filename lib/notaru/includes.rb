@@ -13,6 +13,7 @@ require 'notaru/configuration'
 
 require 'notaru/plugins/authcheck'
 require 'notaru/plugins/autovoice'
+require 'notaru/plugins/channel_mention_ban'
 require 'notaru/plugins/ctcp'
 require 'notaru/plugins/quotes'
 require 'notaru/plugins/secretadmin'

@@ -17,6 +17,7 @@ GEM
     domain_name (0.5.20161129)
       unf (>= 0.0.5, < 1.0.0)
     ffi (1.9.14-x64-mingw32)
+    ffi (1.9.14-x86-mingw32)
     gist (4.5.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
@@ -28,6 +29,8 @@ GEM
       mini_portile2 (~> 2.1.0)
     nokogiri (1.6.8.1-x64-mingw32)
       mini_portile2 (~> 2.1.0)
+    nokogiri (1.6.8.1-x86-mingw32)
+      mini_portile2 (~> 2.1.0)
     parser (2.3.3.1)
       ast (~> 2.2)
     powerpack (0.1.1)
@@ -38,6 +41,11 @@ GEM
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
     rest-client (1.8.0-x64-mingw32)
+      ffi (~> 1.9)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
+    rest-client (1.8.0-x86-mingw32)
       ffi (~> 1.9)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
@@ -68,11 +76,13 @@ GEM
       unf_ext
     unf_ext (0.0.7.2)
     unf_ext (0.0.7.2-x64-mingw32)
+    unf_ext (0.0.7.2-x86-mingw32)
     unicode-display_width (1.1.2)
 
 PLATFORMS
   ruby
   x64-mingw32
+  x86-mingw32
 
 DEPENDENCIES
   addressable
@@ -87,4 +97,4 @@ DEPENDENCIES
   unirest!
 
 BUNDLED WITH
-   1.12.5
+   1.13.6
