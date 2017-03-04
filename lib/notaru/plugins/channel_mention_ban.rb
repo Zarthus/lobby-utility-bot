@@ -9,15 +9,15 @@ module Notaru
       def initialize(*args)
           super
 
-          @akick_default_duration = 1
-          @akick_after_warnings = 3
+          @akick_default_duration = 3
+          @akick_after_warnings = 2
           @channels = ["#lobby"]
           @exempt = []
           @whitelist = ["#dragonweyr", "#help", "#lobby", "#coders"]
           @warnings = {}
           @format = "%{name}, please do not mention channels/hashtags/strings starting with '#' in %{channel}." +
             " Refer to https://lobby.lynvie.com/rules for the rules."
-          @warn_clearance = 7200
+          @warn_clearance = 3600 * 8
 
           Timer(@warn_clearance) { @warnings = {} }
       end
@@ -138,6 +138,7 @@ module Notaru
           name: m.user.name
         }
 
+        m.user.refresh
         if m.user.authed?
           to_warn = m.user.authname.downcase
         else
@@ -146,20 +147,24 @@ module Notaru
         uaddr = get_user_akick_address(m.user)
 
         if !@warnings.include?(to_warn)
-          @warnings[uaddr] = 1
+          @warnings[to_warn] = 1
         else
-          @warnings[uaddr] = @warnings[uaddr] + 1
+          @warnings[to_warn] = @warnings[to_warn] + 1
         end
 
         uwarnings = @warnings[to_warn]
 
         if uwarnings >= @akick_after_warnings
           duration = uwarnings > @akick_after_warnings ? @akick_default_duration * uwarnings : @akick_default_duration
-
-          return akick_add(m.channel.name, uaddr, text, duration)
+          m.channel.kick(m.user, text)
+          return akick_add(m.channel.name, uaddr, "Banned for #{duration} hours for repeatedly advertising channels. | #{m.message}", duration)
         end
 
-        m.reply(text)
+        if m.channel.opped?(@bot)
+          m.channel.kick(m.user, text)
+        else
+          m.reply(text)
+        end
       end
 
       def get_user_akick_address(user)
