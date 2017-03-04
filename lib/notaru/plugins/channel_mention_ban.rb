@@ -57,7 +57,7 @@ module Notaru
                 return m.reply("Cannot find nick #{safe_arg}")
               end
 
-              to_push =  'h:' + user.mask('*!%u@%h')
+              to_push =  'h:' + user.mask('*!%u@%h').to_s
             elsif arg[0] == 'a'
               to_push = 'a:' + safe_arg.downcase
             else
