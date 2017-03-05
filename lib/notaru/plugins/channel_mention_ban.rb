@@ -9,7 +9,7 @@ module Notaru
       def initialize(*args)
           super
 
-          @akick_default_duration = 3
+          @akick_default_duration = 5
           @akick_after_warnings = 2
           @channels = ["#lobby"]
           @exempt = []
@@ -17,7 +17,7 @@ module Notaru
           @warnings = {}
           @format = "%{name}, please do not mention channels/hashtags/strings starting with '#' in %{channel}." +
             " Refer to https://lobby.lynvie.com/rules for the rules."
-          @warn_clearance = 3600 * 8
+          @warn_clearance = 3600 * 12
 
           Timer(@warn_clearance) { @warnings = {} }
       end
@@ -155,7 +155,7 @@ module Notaru
         uwarnings = @warnings[to_warn]
 
         if uwarnings >= @akick_after_warnings
-          duration = uwarnings > @akick_after_warnings ? @akick_default_duration * uwarnings : @akick_default_duration
+          duration = uwarnings > @akick_after_warnings ? @akick_default_duration ** uwarnings : @akick_default_duration
           m.channel.kick(m.user, text)
           return akick_add(m.channel.name, uaddr, "Banned for #{duration} hours for repeatedly advertising channels. | #{m.message}", duration)
         end
