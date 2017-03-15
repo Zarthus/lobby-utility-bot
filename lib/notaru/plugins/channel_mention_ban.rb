@@ -1,3 +1,5 @@
+require 'time'
+
 module Notaru
   module Plugin
     class ChannelMentionBan
@@ -9,7 +11,8 @@ module Notaru
       def initialize(*args)
           super
 
-          @akick_default_duration = 5
+          @akick_base_duration = 12
+          @akick_default_duration = 4
           @akick_after_warnings = 2
           @channels = ["#lobby"]
           @exempt = []
@@ -17,22 +20,22 @@ module Notaru
           @warnings = {}
           @format = "%{name}, please do not mention channels/hashtags/strings starting with '#' in %{channel}." +
             " Refer to https://lobby.lynvie.com/rules for the rules."
-          @warn_clearance = 3600 * 12
-
-          Timer(@warn_clearance) { @warnings = {} }
+          @warn_clearance = (3 * 24 * 60 * 60)
+          @keep = []
+          @next_reset = newtime
       end
 
       match CHANNEL_MENTION_REGEX, method: :on_channel_mention, use_prefix: false
-      match /mention(?: ([^ ]+)(?: ([^ ]+))?)?/, method: :cmd_chanmen
+      match /mention(?: ([^ ]+)(?: ([^ ]+))?(?: ([^ ]+))?)?/, method: :cmd_chanmen
 
-      def cmd_chanmen(m, command = nil, arg = nil)
+      def cmd_chanmen(m, command = nil, arg = nil, arg2 = nil)
         if command == nil
           return cmd_chanmen(m, 'help')
         end
 
         if m.channel.opped?(m.user)
           if command == 'help'
-            return m.reply('Usage: !mention (help|clear|exempt|status|view)')
+            return m.reply('Usage: !mention (help|clear|exempt|status|view|keep|unkeep|warn|unwarn)')
           elsif command == 'clear'
             if !arg.nil? && !['warning', 'exempt'].include?(arg)
               return m.reply('Usage: !mention clear [warning|exempt]')
@@ -72,16 +75,58 @@ module Notaru
             m.reply("Added #{safe_arg} to my exemption list (lasts until reboot)")
           elsif command == 'status'
             m.reply("Monitoring channels: #{@channels.to_s}, whitelisted channels: #{@whitelist.to_s}, exempt users: #{@exempt.to_s}")
-            m.reply("Default akick duration is #{@akick_default_duration}h, akicks will be issued after #{@akick_after_warnings} warnings.")
-            m.reply("Warnings are cleared every #{@warn_clearance}s, warning format is: #{@format}")
+            m.reply("Default growing akick duration is #{@akick_default_duration}h, with a base of #{@akick_base_duration}h added to this. akicks will be issued after #{@akick_after_warnings} warnings.")
+            m.reply("Warnings are cleared every #{@warn_clearance}s, warning format is: #{@format}, next reset cycle is at #{@next_reset.utc.iso8601}")
             return
           elsif command == 'view'
-            return m.reply("Current warnings: #{@warnings.to_s}")
+            return m.reply("Current warnings: #{@warnings.to_s}, keeping the warnings of: #{@keep.to_s}")
+          elsif command == 'keep' || command == 'stick'
+            @keep << arg
+            m.reply("Keeping #{arg}'s warnings saved.")
+          elsif command == 'unkeep' || command == 'unstick'
+            if !@keep.include?(arg)
+              return m.reply("Cannot unkeep #{arg}, they don't appear to be kept.")
+            end
+            @keep.delete(arg)
+            m.reply("Unkept #{arg}")
+          elsif command == 'warn'
+              if arg.nil?
+                return m.reply('Usage: !mention warn <nick> [amount = 1]')
+              end
+              amount = arg2.nil? ? 1 : arg2.to_i
+
+              if @warnings.include?(arg)
+                wcount = @warnings[arg] + amount
+              else
+                @warnings[arg] = 0
+                wcount = amount
+              end
+
+              @warnings[arg] = @warnings[arg] + amount
+              m.reply("Warning amount for #{arg} increased from #{@warnings[arg] - amount} to #{@warnings[arg]}")
+          elsif command == 'unwarn'
+            if arg.nil?
+              return m.reply('Usage: !mention warn <nick> [amount = 1]')
+            end
+            amount = arg2.nil? ? 1 : arg2.to_i
+
+            if !@warnings.include?(arg)
+              return m.reply("User #{arg} has no warnings to speak of.")
+            end
+
+            if @warnings[arg] - amount < 0
+              return m.reply("New warning count cannot be negative.")
+            end
+
+            @warnings[arg] = @warnings[arg] - amount
+            m.reply("Warning amount for #{arg} decreased from #{@warnings[arg] + amount} to #{@warnings[arg]}")
           end
         end
       end
 
       def on_channel_mention(m, mentioned_channel)
+        reset_warnings
+
         in_supported_channel = false
         @channels.each do |chan|
           if m.channel.name != chan
@@ -173,9 +218,36 @@ module Notaru
 
       def akick_add(channel, host, reason, duration_in_hours = nil)
         duration_in_hours = @akick_default_duration if duration_in_hours.nil?
+        duration_in_hours = duration_in_hours + @akick_base_duration
+
+        if duration_in_hours > 120
+            duration_in_hours = 120
+        end
 
         Target("ChanServ").send("AKICK #{channel} ADD #{host} !T #{duration_in_hours}h #{reason}")
       end
-    end
+
+      def reset_warnings
+          unless Time.now > @next_reset
+            return
+          end
+
+          info "Resetting warnings"
+          info "old warnings: #{@warnings.to_s}"
+
+          new_warns = {}
+          @keep.each do |name|
+              wcount = @warnings.include?(name) ? @warnings[name] : 0
+              new_warns[name] = wcount
+          end
+
+          info "new warnings: #{new_warns.to_s}"
+          @warnings = new_warns
+      end
+
+      def newtime
+        Time.now + @warn_clearance
+      end
+   end
   end
 end
