@@ -144,7 +144,7 @@ module Notaru
         end
 
         @whitelist.each do |chan|
-          if mentioned_channel == chan
+          if mentioned_channel.downcase == chan.downcase
             debug "Channel mentioned [#{mentioned_channel}] is whitelisted"
             return
           end
