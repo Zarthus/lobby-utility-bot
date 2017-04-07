@@ -136,8 +136,7 @@ module Notaru
             return m.channel.kick(m.user, "We appear to be out of sync and haven't detected you as being voiced, please rejoin the channel to resynchronize the bot.")
         end
 
-        m.channel.devoice(m.user)
-        m.channel.mode("+q " + m.user.mask('*!%u@%h').to_s)
+        m.channel.mode("+q-v " + m.user.mask('*!%u@%h').to_s + " " + m.user.nick)
 
         Timer(60, shots: 1, start_automatically: false) do
             m.channel.mode("-q " + m.user.mask('*!%u@%h').to_s)
