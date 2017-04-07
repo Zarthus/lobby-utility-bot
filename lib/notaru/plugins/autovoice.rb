@@ -137,10 +137,10 @@ module Notaru
         end
 
         m.channel.devoice(m.user)
-        m.channel.mode("+q " + m.user.mask('*!%u@%h'))
+        m.channel.mode("+q " + m.user.mask('*!%u@%h').to_s)
 
         Timer(60, shots: 1, start_automatically: false) do
-            m.channel.mode("-q " + m.user.mask('*!%u@%h'))
+            m.channel.mode("-q " + m.user.mask('*!%u@%h').to_s)
         end.start
       end
 
