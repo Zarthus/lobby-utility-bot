@@ -1,6 +1,6 @@
 module Notaru
   VERSION_MAJOR = 1
-  VERSION_MINOR = 6
+  VERSION_MINOR = 7
   VERSION_BUILD = 0
   VERSION_APPEND = ''.freeze
 
