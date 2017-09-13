@@ -51,7 +51,7 @@ module Notaru
         return unless @channels.include?(m.channel.name)
 
         unless m.channel.opped?(m.user)
-          m.user.notice('You need to be a channel op to use this command.')
+          return m.user.notice('You need to be a channel op to use this command.')
         end
 
         if command == 'exempt'
