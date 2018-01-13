@@ -19,7 +19,7 @@ module Notaru
           @whitelist = ["#dragonweyr", "#help", "#lobby", "#coders"]
           @warnings = {}
           @format = "%{name}, please do not mention channels/hashtags/strings starting with '#' in %{channel}." +
-            " Refer to https://lobby.lynvie.com/rules for the rules."
+             " Refer to https://lobby.liefland.net/rules for the rules."
           @warn_clearance = (3 * 24 * 60 * 60)
           @keep = []
           @next_reset = newtime
