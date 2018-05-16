@@ -7,7 +7,7 @@ gem 'thread_safe'
 gem 'addressable'
 gem 'nokogiri'
 gem 'shorturl'
-gem 'unirest', git: 'https://github.com/Mashape/unirest-ruby.git'
+gem 'unirest', git: 'https://github.com/Kong/unirest-ruby.git'
 
 group :test do
   gem 'rspec'
