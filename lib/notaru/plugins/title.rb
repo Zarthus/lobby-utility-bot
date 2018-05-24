@@ -1,6 +1,6 @@
 require 'addressable/uri'
 require 'nokogiri'
-require 'unirest'
+require 'rest-client'
 
 module Notaru
   module Plugin
@@ -29,7 +29,7 @@ module Notaru
           '(?:^|\s+)' + (@bot.config.prefix_char.nil? ? '!' : @bot.config.prefix_char)
         )
 
-        Unirest.user_agent("NotaruIRCBot/#{VERSION}")
+        @useragent = "NotaruIRCBot/#{VERSION}"
 
         @last_recorded_url = nil
         @last_title_url = nil
@@ -135,7 +135,7 @@ module Notaru
       # @param [Addressable::URI, String] uri
       # @return [String, false]
       def fetch_html(uri)
-        response = Unirest.get(uri.to_s)
+        response = RestClient.get(uri.to_s, {'User-Agent': @useragent})
 
         return false if response.code != 200
 
